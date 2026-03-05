@@ -2,18 +2,27 @@
 title: Introduction
 description: Welcome to the VedaTrace documentation.
 ---
+import { Card, Cards } from 'fumadocs-ui/components/card';
 
-## Welcome to VedaTrace
+## Observability without the Overkill
 
-VedaTrace is a universal logging solution designed for modern applications. It provides a simple, type-safe, and lightweight SDK for capturing and sending logs from your applications to the VedaTrace platform.
+VedaTrace is a minimalist, edge-powered logging and observability platform designed to provide developers with actionable signals for fixing bugs without the complexity of traditional dashboards.
+
+It is built on Cloudflare Workers for &lt;50ms latency and zero-cold-start ingestion, and provides AI-powered debugging to analyze stack traces and suggest fixes in plain English.
 
 ### Key Features
 
-- **Universal:** Works in Node.js, Cloudflare Workers, browsers, and more.
-- **Type-safe:** Full TypeScript support with autocomplete.
-- **Lightweight:** Minimal performance overhead.
-- **Developer-friendly:** Easy to use API and framework integrations.
+- **Zero-Config PII Scrubbing**: Automatically redacts passwords, secrets, and keys by default.
+- **Soft-Cap Policy**: Prevents "denial of wallet" by keeping logs during spikes instead of dropping them or charging surprise overage fees.
+- **Simple Search**: No complex query languages; uses a Google-like search interface.
+- **No Vendor Lock-in**: Allows users to export their data at any time.
 
-### Getting Started
+## Getting Started
 
-To get started, choose the SDK for your programming language from the sidebar.
+To get started, choose the SDK for your programming language or explore the API reference.
+
+<Cards>
+  <Card title="JavaScript/TypeScript" href="/docs/javascript-sdk" />
+  <Card title="Python" href="/docs/python-sdk" />
+  <Card title="Dart" href="/docs/dart-sdk" />
+</Cards>
