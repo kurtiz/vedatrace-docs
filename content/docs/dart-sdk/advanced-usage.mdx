@@ -1,0 +1,48 @@
+---
+title: Advanced Usage
+description: Learn about advanced features of the VedaTrace SDK for Dart.
+---
+
+### Custom Transports
+
+You can provide your own transport implementation by extending the `VedaTraceTransport` class and passing it in the `transports` list in the configuration.
+
+```dart
+import 'package:vedatrace/vedatrace.dart';
+
+class MemoryTransport extends VedaTraceTransport {
+  final List<List<LogEntry>> batches = <List<LogEntry>>[];
+
+  @override
+  Future<void> send(List<LogEntry> logs) async {
+    batches.add(List<LogEntry>.unmodifiable(logs));
+  }
+}
+
+final transport = MemoryTransport();
+final logger = vedatrace(
+  VedatraceConfig(
+    service: 'custom',
+    transports: <VedaTraceTransport>[transport],
+  ),
+);
+```
+
+### Manual Flush
+
+The `flush()` method ensures that all buffered logs are dispatched. This is useful when you need to make sure that logs are sent before the application exits.
+
+```dart
+await logger.flush();
+```
+
+### Batching Behavior
+
+Batching is an opt-in feature. When disabled (default), each log is dispatched immediately. When enabled, logs are enqueued and sent when:
+- The queue size reaches `batchSize`.
+- The periodic timer reaches `flushInterval`.
+- `flush()` is called manually.
+
+### Retry Behavior (HTTP Only)
+
+The retry mechanism applies only to the `VedaTraceHttpTransport`. It is controlled by `maxRetries` and `retryDelay`. If a request fails, it will be retried a fixed number of times with a fixed delay between each attempt.

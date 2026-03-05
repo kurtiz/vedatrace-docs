@@ -1,0 +1,20 @@
+---
+title: Logging
+description: Learn about the different log levels and how to use them in the Python SDK.
+---
+
+The VedaTrace SDK for Python provides five log levels: `debug`, `info`, `warning`, `error`, and `fatal`.
+
+```python
+logger.debug("debug message")
+logger.info("info message")
+logger.warning("warning message")
+logger.error("error message")
+logger.fatal("fatal message")
+```
+
+You can also pass a dictionary of extra data as the second argument to any logging method.
+
+```python
+logger.info("User logged in", {"user_id": 123})
+```

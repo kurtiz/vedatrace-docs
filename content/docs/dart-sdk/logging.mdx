@@ -1,0 +1,26 @@
+---
+title: Logging
+description: Learn about the different log levels and how to use them in the Dart SDK.
+---
+
+The VedaTrace SDK for Dart provides five log levels: `debug`, `info`, `warn`, `error`, and `fatal`.
+
+### All Log Levels
+
+```dart
+logger.debug('debug message');
+logger.info('info message');
+logger.warn('warn message');
+logger.error(Exception('error object'));
+logger.fatal('fatal message');
+```
+
+The `error` and `fatal` methods can accept any `Object`, which will be safely converted to a string message.
+
+### Service Override
+
+You can override the default service for individual logs:
+
+```dart
+logger.info('using a different service', service: 'billing-worker');
+```

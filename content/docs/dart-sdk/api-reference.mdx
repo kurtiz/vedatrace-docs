@@ -1,0 +1,44 @@
+---
+title: API Reference
+description: The complete API reference for the VedaTrace SDK for Dart.
+---
+
+### `VedatraceLogger vedatrace(VedatraceConfig config)`
+
+Creates a new logger instance.
+
+### `VedatraceLogger devVedatrace(...)`
+
+Creates a new logger instance with console logging enabled by default.
+
+### `logger.debug(message, {Map<String, Object?>? metadata, String? service})`
+
+Logs a message at the `debug` level.
+
+### `logger.info(message, {Map<String, Object?>? metadata, String? service})`
+
+Logs a message at the `info` level.
+
+### `logger.warn(message, {Map<String, Object?>? metadata, String? service})`
+
+Logs a message at the `warn` level.
+
+### `logger.error(Object, {Map<String, Object?>? metadata, String? service})`
+
+Logs a message at the `error` level.
+
+### `logger.fatal(Object, {Map<String, Object?>? metadata, String? service})`
+
+Logs a message at the `fatal` level.
+
+### `VedatraceLogger logger.child(Map<String, Object?> defaults)`
+
+Creates a new child logger instance with default metadata.
+
+### `Future<void> logger.flush()`
+
+Manually flushes the log buffer.
+
+### `void logger.dispose()`
+
+Disposes the logger and releases all resources.

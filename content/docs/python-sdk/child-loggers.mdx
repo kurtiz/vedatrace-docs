@@ -1,0 +1,24 @@
+---
+title: Child Loggers
+description: Learn how to create and use child loggers in the Python SDK.
+---
+
+Child loggers allow you to create new logger instances that inherit the configuration of the parent logger, but with additional default metadata.
+
+```python
+from vedatrace import VedaTrace
+
+parent = VedaTrace("YOUR_API_KEY", service="your-service")
+api_logger = parent.child({"module": "api"})
+api_logger.info("Request handled", {"request_id": "123"})
+```
+
+### Metadata Precedence
+
+When using child loggers, metadata is combined with the following precedence (from lowest to highest):
+
+1.  Parent logger's default metadata
+2.  Child logger's default metadata
+3.  Per-call metadata
+
+Child loggers share the same runtime engine (transports, batching buffer, etc.) as the parent logger. `child.close()` does not tear down the parent-owned engine.

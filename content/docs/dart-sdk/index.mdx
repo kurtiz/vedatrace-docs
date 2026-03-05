@@ -1,0 +1,50 @@
+---
+title: Quick Start
+description: Get started with the VedaTrace SDK for Dart.
+---
+
+## Installation
+
+Install the VedaTrace SDK using `dart pub add`.
+
+```bash
+dart pub add vedatrace
+```
+
+## Quick Start
+
+```dart
+import 'package:vedatrace/vedatrace.dart';
+
+Future<void> main() async {
+  final logger = vedatrace(
+    const VedatraceConfig(
+      service: 'my-service',
+      consoleEnabled: true,
+    ),
+  );
+
+  logger.info('Application started');
+  logger.warn('Cache miss', metadata: <String, Object?>{'key': 'user:42'});
+
+  await logger.flush();
+  logger.dispose();
+}
+```
+
+## Dev Mode
+
+`devVedatrace(...)` is a convenience factory with console enabled by default.
+
+```dart
+import 'package:vedatrace/vedatrace.dart';
+
+Future<void> main() async {
+  final logger = devVedatrace(service: 'local-dev');
+
+  logger.debug('debug in development');
+  logger.info('ready');
+
+  await logger.flush();
+}
+```

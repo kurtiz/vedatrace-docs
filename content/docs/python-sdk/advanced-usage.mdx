@@ -1,0 +1,70 @@
+---
+title: Advanced Usage
+description: Learn about advanced features of the VedaTrace SDK for Python.
+---
+
+### Custom Transports
+
+You can provide your own transport implementation by creating a class with `emit` and `close` methods, and passing an instance of it in the `transports` list in the configuration.
+
+```python
+from vedatrace import LogRecord, VedaTrace, VedaTraceConfig
+
+class MemoryTransport:
+    def __init__(self) -> None:
+        self.batches: list[list[LogRecord]] = []
+
+    def emit(self, records: list[LogRecord]) -> None:
+        self.batches.append(list(records))
+
+    def close(self) -> None:
+        return None
+
+transport = MemoryTransport()
+config = VedaTraceConfig(
+    api_key="YOUR_API_KEY",
+    service="your-service",
+    console_enabled=False,
+    transports=[transport],
+)
+
+logger = VedaTrace("YOUR_API_KEY", service="your-service", config=config)
+logger.info("Stored in custom transport")
+```
+
+### Batching (Opt-In)
+
+Batching is disabled by default. Enable it to queue logs and flush in groups by threshold or interval.
+
+```python
+from vedatrace import BatchingConfig, VedaTrace, VedaTraceConfig
+
+config = VedaTraceConfig(
+    api_key="YOUR_API_KEY",
+    service="your-service",
+    console_enabled=False,
+    batching=BatchingConfig(enabled=True, batch_size=10, flush_interval_seconds=5.0),
+)
+
+logger = VedaTrace("YOUR_API_KEY", service="your-service", config=config)
+logger.info("Queued log")
+logger.flush() # Force-send pending records
+```
+
+### Retry Policy (HTTP Only)
+
+`RetryConfig` applies only to HTTP sends. Retries use a fixed delay and stop after the configured maximum attempts. If all retries fail, the final error is routed to `on_error` when provided.
+
+```python
+from vedatrace import RetryConfig, VedaTrace, VedaTraceConfig
+
+config = VedaTraceConfig(
+    api_key="YOUR_API_KEY",
+    service="your-service",
+    console_enabled=False,
+    retry=RetryConfig(max_retries=3, retry_delay_seconds=1.0),
+)
+
+logger = VedaTrace("YOUR_API_KEY", service="your-service", config=config)
+logger.info("Event")
+```

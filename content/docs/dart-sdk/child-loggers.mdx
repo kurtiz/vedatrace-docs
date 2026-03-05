@@ -1,0 +1,29 @@
+---
+title: Child Loggers
+description: Learn how to create and use child loggers in the Dart SDK.
+---
+
+Child loggers allow you to create new logger instances that inherit the configuration of the parent logger, but with additional default metadata.
+
+```dart
+final base = vedatrace(const VedatraceConfig(service: 'api'));
+final requestLogger = base.child(<String, Object?>{
+  'requestId': 'req-123',
+  'tenant': 'acme',
+});
+
+requestLogger.info(
+  'request started',
+  metadata: <String, Object?>{'tenant': 'override-tenant'},
+);
+```
+
+### Metadata Precedence
+
+When using child loggers, metadata is combined with the following precedence (from lowest to highest):
+
+1.  Parent logger's default metadata
+2.  Child logger's default metadata
+3.  Per-call metadata
+
+Child loggers share the same runtime engine (transports, batching buffer, etc.) as the parent logger.

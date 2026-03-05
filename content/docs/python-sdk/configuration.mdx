@@ -1,0 +1,35 @@
+---
+title: Configuration
+description: Learn how to configure the VedaTrace SDK for Python.
+---
+
+Use `VedaTraceConfig` to control runtime behavior.
+
+```python
+from vedatrace import BatchingConfig, RetryConfig, VedaTrace, VedaTraceConfig
+
+def on_error(exc: Exception) -> None:
+    # Route SDK failures to your telemetry.
+    pass
+
+config = VedaTraceConfig(
+    api_key="YOUR_API_KEY",
+    service="your-service",
+    console_enabled=False,
+    batching=BatchingConfig(enabled=True, batch_size=10, flush_interval_seconds=5.0),
+    retry=RetryConfig(max_retries=3, retry_delay_seconds=1.0),
+    on_error=on_error,
+)
+
+logger = VedaTrace("YOUR_API_KEY", service="your-service", config=config)
+```
+
+### Configuration Options
+
+- `api_key` (str): Your VedaTrace API key.
+- `service` (str): A default name for your service or application.
+- `console_enabled` (bool): Whether to enable the console transport.
+- `batching` (BatchingConfig): Configuration for batching logs.
+- `retry` (RetryConfig): Configuration for retrying failed requests.
+- `on_error` (Callable): A callback function for handling errors.
+- `transports` (list): A list of custom transports to use.

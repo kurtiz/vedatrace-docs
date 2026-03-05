@@ -1,0 +1,40 @@
+---
+title: API Reference
+description: The complete API reference for the VedaTrace SDK for Python.
+---
+
+### `VedaTrace(api_key, service, config)`
+
+Creates a new logger instance.
+
+### `logger.debug(message, extra=None)`
+
+Logs a message at the `debug` level.
+
+### `logger.info(message, extra=None)`
+
+Logs a message at the `info` level.
+
+### `logger.warning(message, extra=None)`
+
+Logs a message at the `warning` level.
+
+### `logger.error(message, extra=None)`
+
+Logs a message at the `error` level.
+
+### `logger.fatal(message, extra=None)`
+
+Logs a message at the `fatal` level.
+
+### `logger.child(defaults)`
+
+Creates a new child logger instance with default metadata.
+
+### `logger.flush()`
+
+Manually flushes the log buffer.
+
+### `logger.close()`
+
+Disposes the logger and releases all resources.

@@ -1,0 +1,39 @@
+---
+title: Configuration
+description: Learn how to configure the VedaTrace SDK for Dart.
+---
+
+The `vedatrace` function accepts a `VedatraceConfig` object with the following options:
+
+- `apiKey` (String?): API key for HTTP transport. If null/empty, default HTTP transport is disabled.
+- `service` (String): default service name (required).
+- `endpoint` (String?): ingest endpoint (default `https://ingest.vedatrace.dev/v1/logs`).
+- `consoleEnabled` (bool): enable default console transport (default `true`).
+- `batchingEnabled` (bool): enable batching (default `false`).
+- `batchSize` (int): flush threshold when batching is enabled (default `50`).
+- `flushInterval` (Duration): periodic flush interval when batching is enabled (default `5s`).
+- `maxRetries` (int): HTTP retry attempts after first failure (default `0`).
+- `retryDelay` (Duration): fixed delay between HTTP retries (default `1s`).
+- `transports` (List<VedaTraceTransport>?): custom transport list override. When provided, defaults are not auto-added.
+- `onError` (void Function(Object error)?): callback for internal errors.
+- `onSuccess` (void Function(LogEntry log)?): callback when a log is accepted by the logger pipeline.
+
+### Example
+
+```dart
+import 'package:vedatrace/vedatrace.dart';
+
+final config = VedatraceConfig(
+  apiKey: 'your-api-key',
+  service: 'my-service',
+  environment: 'production',
+  batchingEnabled: true,
+  batchSize: 100,
+  flushInterval: const Duration(seconds: 10),
+  maxRetries: 3,
+  retryDelay: const Duration(seconds: 2),
+  onError: (err) => print('VedaTrace error: $err'),
+);
+
+final logger = vedatrace(config);
+```

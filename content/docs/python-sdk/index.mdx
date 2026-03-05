@@ -1,0 +1,29 @@
+---
+title: Quick Start
+description: Get started with the VedaTrace SDK for Python.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+
+## Installation
+
+Install the VedaTrace SDK using pip.
+
+```bash
+pip install vedatrace
+```
+
+## Quickstart
+
+```python
+from vedatrace import VedaTrace, VedaTraceConfig
+
+config = VedaTraceConfig(
+    api_key="YOUR_API_KEY",
+    service="your-service",
+    console_enabled=False,
+)
+
+logger = VedaTrace("YOUR_API_KEY", service="your-service", config=config)
+logger.info("Service started", {"env": "production"})
+```
