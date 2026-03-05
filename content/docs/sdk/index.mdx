@@ -1,0 +1,62 @@
+---
+title: SDK Quick Start
+description: Get started with the VedaTrace SDK for JavaScript.
+---
+
+import {Tab, Tabs} from 'fumadocs-ui/components/tabs';
+
+## Installation
+
+Install the VedaTrace SDK using your preferred package manager.
+
+<Tabs items={['npm', 'yarn', 'bun', 'pnpm']}>
+    <Tab value="npm">
+        ```bash
+        npm install vedatrace
+        ```
+    </Tab>
+    <Tab value="yarn">
+        ```bash
+        yarn add vedatrace
+        ```
+    </Tab>
+    <Tab value="bun">
+        ```bash
+        bun add vedatrace
+        ```
+    </Tab>
+    <Tab value='pnpm'>
+        ```bash
+        pnpm add vedatrace
+        ```
+    </Tab>
+</Tabs>
+
+## Basic Usage
+
+The `vedatrace` function is the main entry point for the SDK. It returns a logger instance that you can use to send logs to VedaTrace.
+
+```typescript
+import { vedatrace } from 'vedatrace'
+
+const logger = vedatrace({
+  apiKey: 'your-api-key',
+  service: 'my-service'
+})
+
+logger.info('Hello world')
+logger.error('Something went wrong', { error: 'Error message' })
+```
+
+## Development Mode
+
+For local development, you can use `devVedatrace` to log to the console without sending data to VedaTrace.
+
+```typescript
+import { devVedatrace } from 'vedatrace'
+
+// Console-only logging for development
+const logger = devVedatrace({ service: 'my-service' })
+
+logger.info('This is a test log')
+```

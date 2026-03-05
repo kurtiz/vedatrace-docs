@@ -1,0 +1,9 @@
+{
+  "index": "Quick Start",
+  "configuration": "Configuration",
+  "logging": "Logging",
+  "child-loggers": "Child Loggers",
+  "framework-integrations": "Framework Integrations",
+  "advanced-usage": "Advanced Usage",
+  "api-reference": "API Reference"
+}

@@ -7,11 +7,13 @@
     "dev": "vite dev",
     "build": "vite build",
     "start": "node .output/server/index.mjs",
+    "deploy": "bun run build && wrangler deploy",
     "preview": "vite preview",
     "types:check": "fumadocs-mdx && tsc --noEmit",
     "postinstall": "fumadocs-mdx"
   },
   "dependencies": {
+    "@cloudflare/vite-plugin": "^1.26.0",
     "@tanstack/react-router": "1.163.3",
     "@tanstack/react-router-devtools": "1.163.3",
     "@tanstack/react-start": "1.164.0",

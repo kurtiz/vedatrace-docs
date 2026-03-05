@@ -1,0 +1,47 @@
+---
+title: Configuration
+description: Learn how to configure the VedaTrace SDK.
+---
+
+The `vedatrace` function accepts a configuration object with the following options:
+
+```typescript
+const logger = vedatrace({
+  apiKey: 'your-api-key',           // Required for HTTP transport
+  service: 'my-service',            // Default service name
+  endpoint: 'https://ingest.vedatrace.dev/v1/logs',
+  environment: 'production',
+  
+  // Batching
+  batchSize: 100,                   // Flush after N logs
+  flushInterval: 5000,              // Flush after N ms
+  
+  // Retry
+  maxRetries: 3,
+  retryDelay: 1000,
+  
+  // Redaction
+  redaction: {
+    paths: ['password', 'token'],
+    mask: '[REDACTED]'
+  },
+  
+  // Callbacks
+  onError: (err) => console.error('VedaTrace error:', err),
+  onSuccess: () => console.log('Logs sent')
+})
+```
+
+### Configuration Options
+
+- `apiKey` (string, required): Your VedaTrace API key.
+- `service` (string): A default name for your service or application.
+- `endpoint` (string): The VedaTrace ingestion endpoint. Defaults to `https://ingest.vedatrace.dev/v1/logs`.
+- `environment` (string): The environment your application is running in, e.g., `production`, `development`, `staging`.
+- `batchSize` (number): The number of logs to batch before sending. Defaults to `100`.
+- `flushInterval` (number): The maximum time in milliseconds to wait before sending a batch. Defaults to `5000`.
+- `maxRetries` (number): The maximum number of times to retry sending a batch. Defaults to `3`.
+- `retryDelay` (number): The delay in milliseconds between retries. Defaults to `1000`.
+- `redaction` (object): An object with `paths` (an array of strings to redact) and `mask` (the string to replace them with).
+- `onError` (function): A callback function that is called when an error occurs while sending logs.
+- `onSuccess` (function): A callback function that is called when logs are sent successfully.

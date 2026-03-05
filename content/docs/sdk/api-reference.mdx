@@ -1,0 +1,57 @@
+---
+title: API Reference
+description: The complete API reference for the VedaTrace SDK.
+---
+
+### `vedatrace(config)`
+
+Creates a new logger instance. See the [Configuration](/docs/sdk/configuration) page for all available options.
+
+### `logger.debug(message, metadata?)`
+
+Logs a message at the `debug` level.
+
+- `message` (string): The message to log.
+- `metadata` (object, optional): Additional data to include with the log.
+
+### `logger.info(message, metadata?)`
+
+Logs a message at the `info` level.
+
+- `message` (string): The message to log.
+- `metadata` (object, optional): Additional data to include with the log.
+
+### `logger.warn(message, metadata?)`
+
+Logs a message at the `warn` level.
+
+- `message` (string): The message to log.
+- `metadata` (object, optional): Additional data to include with the log.
+
+### `logger.error(message | Error, metadata?)`
+
+Logs a message at the `error` level.
+
+- `message` (string | Error): The message or `Error` object to log.
+- `metadata` (object, optional): Additional data to include with the log.
+
+### `logger.fatal(message | Error, metadata?)`
+
+Logs a message at the `fatal` level.
+
+- `message` (string | Error): The message or `Error` object to log.
+- `metadata` (object, optional): Additional data to include with the log.
+
+### `logger.child(defaults)`
+
+Creates a new child logger instance with default metadata.
+
+- `defaults` (object): An object of default metadata to include with all logs from this child logger.
+
+### `logger.flush()`
+
+Manually flushes the log buffer, sending all pending logs to the configured transports. Returns a `Promise` that resolves when the flush is complete.
+
+### `logger.stop()`
+
+Stops the background timer that automatically flushes logs. This is useful for graceful shutdown in long-running applications.

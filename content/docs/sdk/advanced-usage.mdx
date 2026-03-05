@@ -1,0 +1,65 @@
+---
+title: Advanced Usage
+description: Learn about advanced features of the VedaTrace SDK.
+---
+
+### Custom Transports
+
+The VedaTrace SDK comes with a console transport and an HTTP transport. You can also create your own custom transports.
+
+```typescript
+import { VedaTraceHttpTransport, VedaTraceConsoleTransport } from 'vedatrace/transports'
+
+const logger = vedatrace({
+  transports: [
+    new VedaTraceHttpTransport({ apiKey: '...' }),
+    new VedaTraceConsoleTransport({ format: 'pretty' })
+  ]
+})
+```
+
+### Manual Flush
+
+In some cases, you may want to manually flush the logs to ensure they are sent before the process exits.
+
+```typescript
+// Flush all pending logs
+await logger.flush()
+
+// Use in request handlers
+app.post('/webhook', async (req, res) => {
+  logger.info('Webhook received')
+  await logger.flush() // Ensure sent before responding
+  res.json({ ok: true })
+})
+```
+
+### Graceful Shutdown
+
+The SDK uses a background timer to flush logs. For short-lived scripts or when you need to explicitly clean up, you can stop the timer.
+
+```typescript
+const logger = vedatrace({ apiKey: '...' })
+
+logger.info('Processing...')
+
+// For short-lived scripts
+await logger.flush()
+logger.stop()  // Stop background timer
+```
+
+The SDK timer uses `unref()` so the process will exit automatically when there's nothing else to do. Call `stop()` if you need explicit cleanup.
+
+### Error Handling
+
+The VedaTrace SDK will never throw an error. Instead, it will emit an `error` event that you can listen for.
+
+```typescript
+const logger = vedatrace({
+  apiKey: '...',
+  onError: (err) => {
+    // Handle transport errors
+    console.error('VedaTrace error:', err)
+  }
+})
+```

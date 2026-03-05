@@ -1,0 +1,17 @@
+---
+title: Child Loggers
+description: Learn how to create and use child loggers.
+---
+
+Child loggers allow you to create new logger instances that inherit the configuration of the parent logger, but with additional default metadata. This is useful for adding context to logs within a specific part of your application.
+
+```typescript
+const requestLogger = logger.child({ 
+  requestId: 'req_123',
+  userId: 'user_456' 
+})
+
+requestLogger.info('Processing request') 
+// This log will include the requestId, userId, and the default service
+// from the parent logger.
+```

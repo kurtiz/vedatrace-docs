@@ -1,0 +1,92 @@
+---
+title: Framework Integrations
+description: Learn how to use the VedaTrace SDK with popular frameworks.
+---
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+
+The VedaTrace SDK provides integrations for popular frameworks to make it even easier to capture logs and context.
+
+<Tabs items={['Express.js', 'Next.js', 'React', 'Cloudflare Workers']}>
+  <Tab value="Express.js">
+    The `vedaTraceMiddleware` for Express.js automatically creates a child logger for each request, adding a `requestId` to the context.
+
+    ```typescript
+    import express from 'express'
+    import { vedaTraceMiddleware } from 'vedatrace/express'
+
+    const app = express()
+    app.use(vedaTraceMiddleware({ 
+      apiKey: process.env.VEDATRACE_API_KEY 
+    }))
+
+    app.get('/', (req, res) => {
+      // The logger is available on the request object
+      req.vedatrace.info('Home page visited')
+      res.json({ ok: true })
+    })
+    ```
+  </Tab>
+  <Tab value="Next.js">
+    The `withVedaTrace` higher-order function for Next.js API routes provides a logger instance with context about the request.
+
+    ```typescript
+    import { withVedaTrace } from 'vedatrace/next'
+
+    export const GET = withVedaTrace(async (req, { logger }) => {
+      logger.info('API called')
+      return Response.json({ success: true })
+    }, { apiKey: '...' })
+    ```
+  </Tab>
+  <Tab value="React">
+    The `VedaTraceProvider` and `useVedaTrace` hook allow you to easily access a logger instance within your React components.
+
+    ```tsx
+    import { VedaTraceProvider, useVedaTrace } from 'vedatrace/react'
+
+    function App() {
+      return (
+        <VedaTraceProvider apiKey="..." service="frontend">
+          <MyComponent />
+        </VedaTraceProvider>
+      )
+    }
+
+    function MyComponent() {
+      const logger = useVedaTrace()
+      
+      useEffect(() => {
+        logger.info('Component mounted')
+      }, [])
+      
+      return <div>Hello</div>
+    }
+    ```
+  </Tab>
+  <Tab value="Cloudflare Workers">
+    When using VedaTrace in a Cloudflare Worker, it's important to use `ctx.waitUntil` to ensure that logs are sent before the worker is terminated.
+
+    ```typescript
+    import { vedatrace } from 'vedatrace'
+
+    export default {
+      async fetch(req, env, ctx) {
+        const logger = vedatrace({ 
+          apiKey: env.VEDATRACE_API_KEY,
+          service: 'worker'
+        })
+        
+        logger.info('Request received', { 
+          method: req.method,
+          url: req.url 
+        })
+        
+        // Ensure logs are sent before the response
+        ctx.waitUntil(logger.flush())
+        
+        return new Response('OK')
+      }
+    }
+    ```
+  </Tab>
+</Tabs>
