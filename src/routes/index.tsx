@@ -87,7 +87,7 @@ function Home() {
                   <div className="grow"></div>
                   <div className="size-2 rounded-full bg-red-400"></div>
                 </div>
-                <div className="min-h-[208px]">
+                <div className="min-h-52">
                   <code className="grid p-4">
                     <span>pip install vedatrace</span>
                     <span> </span>
@@ -107,8 +107,8 @@ function Home() {
           {/* Testimonials */}
           <div className="rounded-2xl text-sm bg-origin-border shadow-lg bg-brand-secondary text-brand-secondary-foreground relative p-0">
             <div className="absolute inset-0 z-2 inset-shadow-[0_10px_60px] inset-shadow-brand-secondary rounded-2xl"></div>
-            <div className="group flex overflow-hidden [--duration:40s] [--gap:1rem] [gap:var(--gap)] flex-row p-8">
-              <div className="flex shrink-0 justify-around [gap:var(--gap)] animate-marquee flex-row">
+            <div className="group flex overflow-hidden [--duration:40s] [--gap:1rem] gap-(--gap) flex-row p-8">
+              <div className="flex shrink-0 justify-around gap-(--gap) animate-marquee flex-row">
                 <div className="flex flex-col rounded-xl border bg-fd-card text-landing-foreground p-4 shadow-lg w-[320px]">
                   <p className="text-sm whitespace-pre-wrap">
                     VedaTrace has drastically simplified our distributed tracing implementation. The Python SDK is
@@ -187,7 +187,7 @@ function Home() {
                 </div>
               </div>
               {/* Duplicate for seamless loop */}
-              <div className="flex shrink-0 justify-around [gap:var(--gap)] animate-marquee flex-row">
+              <div className="flex shrink-0 justify-around gap-(--gap) animate-marquee flex-row">
                 <div className="flex flex-col rounded-xl border bg-fd-card text-landing-foreground p-4 shadow-lg w-[320px]">
                   <p className="text-sm whitespace-pre-wrap">
                     VedaTrace has drastically simplified our distributed tracing implementation. The Python SDK is
@@ -334,7 +334,7 @@ function Home() {
           {/* Markdown/MDX Features */}
           <div className="col-span-full my-20">
             <h2 className="text-4xl text-brand mb-8 text-center font-medium tracking-tight">Choose your language.</h2>
-            <p className="text-center mb-8 mx-auto w-full max-w-[800px]">
+            <p className="text-center mb-8 mx-auto w-full max-w-200">
               VedaTrace supports multiple programming languages with identical API patterns. Choose your language and
               start tracing today.
             </p>
@@ -418,7 +418,7 @@ function Home() {
                       </svg>
                     </button>
                   </div>
-                  <div className="text-[0.8125rem] py-3.5 overflow-auto max-h-[600px] fd-scroll-container">
+                  <div className="text-[0.8125rem] py-3.5 overflow-auto max-h-150 fd-scroll-container">
                     <pre className="min-w-full w-max *:flex *:flex-col shiki shiki-themes github-light github-dark">
                       <code>
                         <span className="line">
@@ -504,7 +504,7 @@ function Home() {
                 <span className="font-medium">100+</span> stars
               </div>
             </div>
-            <p className="text-fd-muted-foreground max-w-[600px]">
+            <p className="text-fd-muted-foreground max-w-150">
               Join our growing community of developers using VedaTrace for their distributed tracing needs. Star the
               repository to stay updated with the latest releases.
             </p>
