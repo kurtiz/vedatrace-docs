@@ -74,8 +74,9 @@ function Home() {
                             to manage.
                         </p>
                         <div className="flex flex-row items-center justify-center gap-4 flex-wrap w-fit">
+                            {/* @ts-ignore */}
                             <Link to="/docs/javascript-sdk"
-                                className="inline-flex justify-center px-5 py-3 rounded-full font-medium tracking-tight transition-colors bg-fd-primary text-gray-100 text-brand-foreground max-sm:text-sm"
+                                  className="inline-flex justify-center px-5 py-3 rounded-full font-medium tracking-tight transition-colors bg-fd-primary text-gray-100 text-brand-foreground max-sm:text-sm"
                             >
                                 Get Started in 60 Seconds
                             </Link>
@@ -124,13 +125,14 @@ function Home() {
                     <div className="col-span-full">
                         <h2 className="text-3xl text-brand mb-8 font-medium tracking-tight">Choose Your Weapon</h2>
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                            <Link
-                                to="/docs/javascript-sdk"
-                                className="flex flex-col items-center p-6 bg-fd-card rounded-xl border hover:bg-fd-accent transition-colors"
+                            {/* @ts-ignore */}
+                            <Link to="/docs/javascript-sdk"
+                                  className="flex flex-col items-center p-6 bg-fd-card rounded-xl border hover:bg-fd-accent transition-colors"
                             >
                                 <div
                                     className="size-12 mb-4 bg-fd-primary/10 rounded-lg flex items-center justify-center">
                                     <img
+                                        alt="JavaScript"
                                         className="size-10 rounded-md"
                                         src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg"/>
                                 </div>
@@ -139,13 +141,14 @@ function Home() {
                                     Server-side JavaScript applications
                                 </p>
                             </Link>
-                            <Link
-                                to="/docs/python-sdk"
-                                className="flex flex-col items-center p-6 bg-fd-card rounded-xl border hover:bg-fd-accent transition-colors"
+                            {/* @ts-ignore */}
+                            <Link to="/docs/python-sdk"
+                                  className="flex flex-col items-center p-6 bg-fd-card rounded-xl border hover:bg-fd-accent transition-colors"
                             >
                                 <div
                                     className="size-12 mb-4 bg-fd-primary/10 rounded-lg flex items-center justify-center">
                                     <img
+                                        alt="Python"
                                         className="size-10 rounded-md"
                                         src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg"/>
                                 </div>
@@ -154,13 +157,14 @@ function Home() {
                                     Python applications and services
                                 </p>
                             </Link>
-                            <Link
-                                to="/docs/dart-sdk"
-                                className="flex flex-col items-center p-6 bg-fd-card rounded-xl border hover:bg-fd-accent transition-colors"
+                            {/* @ts-ignore */}
+                            <Link to="/docs/dart-sdk"
+                                  className="flex flex-col items-center p-6 bg-fd-card rounded-xl border hover:bg-fd-accent transition-colors"
                             >
                                 <div
                                     className="size-12 mb-4 bg-fd-primary/10 rounded-lg flex items-center justify-center">
                                     <img
+                                        alt="Dart"
                                         className="size-10 rounded-md"
                                         src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/dart/dart-original.svg"/>
                                 </div>
@@ -172,6 +176,7 @@ function Home() {
                             <div className="flex flex-col items-center p-6 bg-fd-card rounded-xl border opacity-75">
                                 <div className="size-12 mb-4 bg-fd-muted rounded-lg flex items-center justify-center">
                                     <img
+                                        alt="Go"
                                         className="size-10 rounded-md"
                                         src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/go/go-original.svg"/>
                                 </div>
@@ -180,11 +185,12 @@ function Home() {
                             </div>
                             {/* @ts-ignore */}
                             <Link to="/docs/javascript-sdk/framework-integrations"
-                                className="flex flex-col items-center p-6 bg-fd-card rounded-xl border hover:bg-fd-accent transition-colors"
+                                  className="flex flex-col items-center p-6 bg-fd-card rounded-xl border hover:bg-fd-accent transition-colors"
                             >
                                 <div
                                     className="size-12 mb-4 bg-fd-primary/10 rounded-lg flex items-center justify-center">
                                     <img
+                                        alt="React"
                                         className="size-10 rounded-md"
                                         src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/react/react-original.svg"/>
                                 </div>
@@ -200,33 +206,33 @@ function Home() {
                     <div className="col-span-full">
                         <h2 className="text-3xl text-brand mb-8 font-medium tracking-tight">Core Concepts</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <Link
-                                to="/docs/edge-ingestion"
-                                className="flex flex-col p-6 bg-fd-card rounded-xl border hover:bg-fd-accent transition-colors"
+                            {/* @ts-ignore */}
+                            <Link to="/docs/edge-ingestion"
+                                  className="flex flex-col p-6 bg-fd-card rounded-xl border hover:bg-fd-accent transition-colors"
                             >
                                 <h3 className="font-medium tracking-tight text-lg mb-3">Edge Ingestion</h3>
                                 <p className="text-fd-muted-foreground text-sm">Process logs in {'<'}50ms without
                                     slowing down your app</p>
                             </Link>
-                            <Link
-                                to="/docs/auto-scrubbing"
-                                className="flex flex-col p-6 bg-fd-card rounded-xl border hover:bg-fd-accent transition-colors"
+                            {/* @ts-ignore */}
+                            <Link to="/docs/auto-scrubbing"
+                                  className="flex flex-col p-6 bg-fd-card rounded-xl border hover:bg-fd-accent transition-colors"
                             >
                                 <h3 className="font-medium tracking-tight text-lg mb-3">Auto-Scrubbing</h3>
                                 <p className="text-fd-muted-foreground text-sm">Redact PII before logs leave your
                                     server</p>
                             </Link>
-                            <Link
-                                to="/docs/ai-debugger"
-                                className="flex flex-col p-6 bg-fd-card rounded-xl border hover:bg-fd-accent transition-colors"
+                            {/* @ts-ignore */}
+                            <Link to="/docs/ai-debugger"
+                                  className="flex flex-col p-6 bg-fd-card rounded-xl border hover:bg-fd-accent transition-colors"
                             >
                                 <h3 className="font-medium tracking-tight text-lg mb-3">AI Debugger</h3>
                                 <p className="text-fd-muted-foreground text-sm">Llama 3 integration turns stack traces
                                     into plain-English fixes</p>
                             </Link>
-                            <Link
-                                to="/docs/graceful-overflow"
-                                className="flex flex-col p-6 bg-fd-card rounded-xl border hover:bg-fd-accent transition-colors"
+                            {/* @ts-ignore */}
+                            <Link to="/docs/graceful-overflow"
+                                  className="flex flex-col p-6 bg-fd-card rounded-xl border hover:bg-fd-accent transition-colors"
                             >
                                 <h3 className="font-medium tracking-tight text-lg mb-3">Graceful Overflow</h3>
                                 <p className="text-fd-muted-foreground text-sm">Soft-cap pricing that never drops
@@ -239,17 +245,17 @@ function Home() {
                     <div className="col-span-full">
                         <h2 className="text-3xl text-brand mb-8 font-medium tracking-tight">Advanced Usage</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <Link
-                                to="/docs/api-reference"
-                                className="flex flex-col p-6 bg-fd-card rounded-xl border hover:bg-fd-accent transition-colors"
+                            {/* @ts-ignore */}
+                            <Link to="/docs/api-reference"
+                                  className="flex flex-col p-6 bg-fd-card rounded-xl border hover:bg-fd-accent transition-colors"
                             >
                                 <h3 className="font-medium tracking-tight text-lg mb-3">API Reference</h3>
                                 <p className="text-fd-muted-foreground text-sm">Direct access to the POST /v1/logs
                                     endpoint</p>
                             </Link>
-                            <Link
-                                to="/docs/webhooks"
-                                className="flex flex-col p-6 bg-fd-card rounded-xl border hover:bg-fd-accent transition-colors"
+                            {/* @ts-ignore */}
+                            <Link to="/docs/webhooks"
+                                  className="flex flex-col p-6 bg-fd-card rounded-xl border hover:bg-fd-accent transition-colors"
                             >
                                 <h3 className="font-medium tracking-tight text-lg mb-3">Webhooks</h3>
                                 <p className="text-fd-muted-foreground text-sm">Receive real-time notifications for log
