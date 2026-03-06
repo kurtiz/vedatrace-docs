@@ -45,75 +45,61 @@ logger.warn('Cache miss', metadata: <String, Object?>{'key': 'user:42'});
 await logger.flush();
 logger.dispose()`;
 
-const terminalCode = `pnpm create vedatrace-app
+const terminalCode = `> vedatrace dev
+[12:00:01] INFO Starting VedaTrace collector on :8787
+[12:00:02] INFO Connected to Cloudflare Workers
 
-◇ Project name
-│ my-app
+[12:00:03]  INFO my-app | User signed up {"userId": "usr_123", "email": "user@example.com"}
+[12:00:05]  WARN my-app | Cache miss for key "user:123"
+[12:00:06] ERROR my-app | Payment failed {"error": "insufficient_funds", "amount": 99}
 
-◆ Choose a framework
-│ ● Next.js
-│ ○ Express
-│ ○ Fastify
-│ ○ Bun
+> Live tail active - streaming logs...`;
 
-◇ API Key
-│ vedatrace_xxxx_xxxx
+const simpleLogCode = `// Simple as this
+logger.info('Server started')
 
-New App launched!
+// With metadata
+logger.warn('Cache miss', { key: 'user:123' })
 
-Terminal
+// Errors with stack traces
+try {
+  await processPayment(order)
+} catch (err) {
+  logger.error('Payment failed', { error: err.message })
+}`;
 
-> pnpm vedatrace dev
+const advancedLogCode = `// Child loggers with context
+const userLogger = logger.child({ userId: user.id })
+userLogger.info('User action', { action: 'checkout' })
 
-○ Ready on http://localhost:8787`;
+// Request-scoped logging
+app.use((req, res, next) => {
+  const reqLogger = logger.child({ 
+    requestId: req.id,
+    path: req.path 
+  })
+  reqLogger.info('Request started')
+  next()
+})`;
 
-const writerCode = `---
-title: Hello World
----
+const pipelineLogCode = `// Batch processing logs
+const batchLogger = logger.child({ 
+  batchId: batch.id,
+  source: 'csv-import' 
+})
 
-## Overview
-
-I love **VedaTrace**!
-
-\`\`\`ts tab="Tab 1"
-console.log("Hello World")
-\`\`\`
-
-\`\`\`ts tab="Tab 2"
-return 0;
-\`\`\``;
-
-const developerCode = `---
-title: Hello World
----
-
-import { logger } from "@/lib/logger";
-
-## Overview
-
-<LoggerDemo title="Test" />
-
-\`\`\`ts twoslash
-console.log("Hello World");
-
-// give your code decorations [!code ++]
-const name = "vedatrace";
-\`\`\``;
-
-const automationCode = `---
-title: Log Pipeline
----
-
-import { pipeline } from "@/lib/pipeline";
-
-export async function DataView() {
-  const logs = await db.select().from("logs");
-  return logs.map(log => <LogCard key={log.id} {...log} />)
+for (const row of rows) {
+  batchLogger.debug('Processing row', { row: row.id })
+  
+  try {
+    await processRow(row)
+    batchLogger.info('Row processed', { row: row.id })
+  } catch (err) {
+    batchLogger.error('Row failed', { row: row.id, error: err.message })
+  }
 }
 
-<DataView />
-
-<auto-type-table path='./types.ts' name='LogEntry' />`;
+batchLogger.info('Batch complete', { total: rows.length, failed: failedCount })`;
 
 export const Route = createFileRoute('/')({
     component: Home,
@@ -163,18 +149,18 @@ function Home() {
                     </div>
                 </div>
 
-                {/* Terminal Demo Section */}
+                {/* Live Tail Demo Section */}
                 <div className="grid grid-cols-1 gap-10 mt-12 px-6 mx-auto w-full max-w-350 md:px-12">
                     <div className="col-span-full">
                         <h2 className="text-3xl text-brand mb-4 font-medium tracking-tight text-center">
-                            Try it out.
+                            See your logs live.
                         </h2>
                         <div className="rounded-xl border bg-fd-card overflow-hidden font-mono text-sm">
                             <div className="flex items-center gap-2 px-4 py-2 border-b bg-fd-muted">
                                 <div className="size-3 rounded-full bg-red-500"/>
                                 <div className="size-3 rounded-full bg-yellow-500"/>
                                 <div className="size-3 rounded-full bg-green-500"/>
-                                <span className="ml-2 text-fd-muted-foreground text-xs">localhost:8787</span>
+                                <span className="ml-2 text-fd-muted-foreground text-xs">VEDATRACE DASHBOARD</span>
                             </div>
                             <pre className="p-4 overflow-x-auto text-fd-muted-foreground">
                                 <code>{terminalCode}</code>
@@ -226,71 +212,91 @@ function Home() {
                             <div className="rounded-xl overflow-hidden border bg-fd-card">
                                 <img
                                     src="https://assets.vedatrace.dev/misc/vedatrace-dashboard.png"
-                                    alt="Dashboard"
+                                    alt="Live Tail"
                                     className="w-full aspect-video object-cover"
                                 />
                                 <div className="p-4">
-                                    <h3 className="font-medium">Dashboard</h3>
-                                    <p className="text-sm text-fd-muted-foreground">Real-time log streaming</p>
+                                    <h3 className="font-medium">Live Tail</h3>
+                                    <p className="text-sm text-fd-muted-foreground">Stream logs in real-time</p>
                                 </div>
                             </div>
                             <div className="rounded-xl overflow-hidden border bg-fd-card">
                                 <div className="w-full aspect-video bg-fd-muted flex items-center justify-center">
                                     <svg className="size-12 text-fd-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                     </svg>
                                 </div>
                                 <div className="p-4">
-                                    <h3 className="font-medium">API Reference</h3>
-                                    <p className="text-sm text-fd-muted-foreground">REST API documentation</p>
+                                    <h3 className="font-medium">Log Search</h3>
+                                    <p className="text-sm text-fd-muted-foreground">Query by level, service, time</p>
                                 </div>
                             </div>
                             <div className="rounded-xl overflow-hidden border bg-fd-card">
                                 <div className="w-full aspect-video bg-fd-muted flex items-center justify-center">
                                     <svg className="size-12 text-fd-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z" />
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                                     </svg>
                                 </div>
                                 <div className="p-4">
-                                    <h3 className="font-medium">Integrations</h3>
-                                    <p className="text-sm text-fd-muted-foreground">Connect your favorite tools</p>
+                                    <h3 className="font-medium">Alerts</h3>
+                                    <p className="text-sm text-fd-muted-foreground">Get notified instantly</p>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    {/* Customization Section */}
+                    {/* Configuration Section */}
                     <div className="col-span-full">
                         <h2 className="text-3xl text-brand mb-4 font-medium tracking-tight text-center">
-                            Minimal aesthetics, Maximum customizability.
+                            Configure, don't complicate.
                         </h2>
                         <p className="text-center text-fd-muted-foreground mb-6">
-                            VedaTrace offers well-designed themes, with configuration options to fit your needs.
+                            Smart defaults out of the box. Tweak only what you need.
                         </p>
                         <div className="rounded-xl border bg-fd-card p-4 font-mono text-sm">
                             <pre className="overflow-x-auto text-fd-muted-foreground">
-                                <code>{`# Customize your VedaTrace setup
-npx vedatrace init
-
-> Choose a theme...
-> Configure retention...
-> Set up alerts...`}</code>
+                                <code>{`// vedatrace.config.js
+export default {
+  // Your API key from dashboard
+  apiKey: process.env.VEDATRACE_API_KEY,
+  
+  // Service name for grouping
+  service: 'my-app',
+  
+  // Log levels to send
+  levels: ['error', 'warn', 'info'],
+  
+  // Sample 50% of debug logs in production
+  sampling: {
+    debug: process.env.NODE_ENV === 'production' ? 0.5 : 1
+  },
+  
+  // Auto-scrub sensitive data
+  scrub: {
+    email: true,
+    creditCard: true,
+    ipAddress: true
+  },
+  
+  // Flush interval (ms)
+  flushInterval: 1000
+}`}</code>
                             </pre>
                         </div>
                     </div>
 
-                    {/* "Anybody can write" Section */}
+                    {/* Simple to Advanced Section */}
                     <div className="col-span-full">
                         <h2 className="text-3xl text-brand mb-4 font-medium tracking-tight text-center">
-                            Anybody can write.
+                            From simple to powerful.
                         </h2>
                         <p className="text-center text-fd-muted-foreground mb-6">
-                            Native support for structured logging, with intuitive syntax for all skill levels.
+                            Start with one line. Scale with child loggers, batching, and more.
                         </p>
-                        <WriterDeveloperTabs 
-                            writerCode={writerCode}
-                            developerCode={developerCode}
-                            automationCode={automationCode}
+                        <SimpleAdvancedTabs 
+                            simpleCode={simpleLogCode}
+                            advancedCode={advancedLogCode}
+                            pipelineCode={pipelineLogCode}
                         />
                     </div>
 
@@ -298,175 +304,192 @@ npx vedatrace init
                     <div className="col-span-full">
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                             <div>
-                                <h3 className="text-xl font-medium mb-4">The familiar syntax.</h3>
+                                <h3 className="text-xl font-medium mb-4">Edge-first.</h3>
                                 <p className="text-fd-muted-foreground mb-4 text-sm">
-                                    Structured logging made simple, with intuitive conventions.
+                                    Built on Cloudflare Workers for minimal latency.
                                 </p>
                                 <ul className="space-y-2 text-sm">
                                     <li className="flex items-start gap-2">
                                         <svg className="size-5 text-green-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                         </svg>
-                                        <span>Multiple log levels (debug, info, warn, error)</span>
+                                        <span>{'<'}5ms ingestion latency</span>
                                     </li>
                                     <li className="flex items-start gap-2">
                                         <svg className="size-5 text-green-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                         </svg>
-                                        <span>Structured metadata with JSON support</span>
+                                        <span>Zero cold starts</span>
                                     </li>
                                     <li className="flex items-start gap-2">
                                         <svg className="size-5 text-green-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                         </svg>
-                                        <span>Request/response correlation</span>
+                                        <span>Global edge network</span>
                                     </li>
                                     <li className="flex items-start gap-2">
                                         <svg className="size-5 text-green-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                         </svg>
-                                        <span>Custom context injection</span>
+                                        <span>Async, non-blocking</span>
                                     </li>
                                 </ul>
                             </div>
                             <div>
-                                <h3 className="text-xl font-medium mb-4">Extensive but simple.</h3>
+                                <h3 className="text-xl font-medium mb-4">Secure by default.</h3>
                                 <p className="text-fd-muted-foreground mb-4 text-sm">
-                                    Advanced features for developers who need more.
+                                    Your data stays protected with automatic PII handling.
                                 </p>
                                 <ul className="space-y-2 text-sm">
                                     <li className="flex items-start gap-2">
                                         <svg className="size-5 text-green-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                         </svg>
-                                        <span>Child loggers with context</span>
+                                        <span>Auto PII scrubbing</span>
                                     </li>
                                     <li className="flex items-start gap-2">
                                         <svg className="size-5 text-green-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                         </svg>
-                                        <span>Framework integrations</span>
+                                        <span>GDPR compliant</span>
                                     </li>
                                     <li className="flex items-start gap-2">
                                         <svg className="size-5 text-green-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                         </svg>
-                                        <span>TypeScript type safety</span>
+                                        <span>End-to-end encryption</span>
                                     </li>
                                     <li className="flex items-start gap-2">
                                         <svg className="size-5 text-green-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                         </svg>
-                                        <span>Plugin ecosystem</span>
+                                        <span>Custom redaction rules</span>
                                     </li>
                                 </ul>
                             </div>
                             <div>
-                                <h3 className="text-xl font-medium mb-4">Content, always up-to-date.</h3>
+                                <h3 className="text-xl font-medium mb-4">Soft-cap pricing.</h3>
                                 <p className="text-fd-muted-foreground mb-4 text-sm">
-                                    Logs that reflect your application's current state.
+                                    Never lose a log. Pay for what you use, fairly.
                                 </p>
                                 <ul className="space-y-2 text-sm">
                                     <li className="flex items-start gap-2">
                                         <svg className="size-5 text-green-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                         </svg>
-                                        <span>Real-time streaming</span>
+                                        <span>No log drops ever</span>
                                     </li>
                                     <li className="flex items-start gap-2">
                                         <svg className="size-5 text-green-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                         </svg>
-                                        <span>Live tail viewing</span>
+                                        <span>1M free logs/month</span>
                                     </li>
                                     <li className="flex items-start gap-2">
                                         <svg className="size-5 text-green-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                         </svg>
-                                        <span>Auto-refresh dashboards</span>
+                                        <span>$0.50/1M after</span>
                                     </li>
                                     <li className="flex items-start gap-2">
                                         <svg className="size-5 text-green-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                         </svg>
-                                        <span>Instant alert triggers</span>
+                                        <span>No credit card needed</span>
                                     </li>
                                 </ul>
                             </div>
                         </div>
                     </div>
 
-                    {/* Framework Section */}
+                    {/* SDKs Section */}
                     <div className="col-span-full">
-                        <h2 className="text-3xl text-brand mb-8 font-medium tracking-tight text-center">Docs For Engineers.</h2>
+                        <h2 className="text-3xl text-brand mb-8 font-medium tracking-tight text-center">SDKs for every stack.</h2>
                         <div className="mb-8">
-                            <h3 className="text-xl font-medium mb-4">Framework Agnostic</h3>
                             <p className="text-fd-muted-foreground mb-6">
-                                Official support for Next.js, Express, Fastify, Bun — portable to any JavaScript runtime.
+                                First-party SDKs for major languages. More coming soon.
                             </p>
-                            <div className="flex flex-wrap gap-4">
+                            <div className="flex flex-wrap gap-4 justify-center">
                                 <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-fd-card border">
-                                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nextjs/nextjs-original.svg" alt="Next.js" className="size-6" />
-                                    <span className="font-medium">Next.js</span>
+                                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg" alt="JavaScript" className="size-6" />
+                                    <span className="font-medium">JavaScript</span>
                                 </div>
                                 <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-fd-card border">
-                                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/express/express-original.svg" alt="Express" className="size-6" />
-                                    <span className="font-medium">Express</span>
+                                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/typescript/typescript-original.svg" alt="TypeScript" className="size-6" />
+                                    <span className="font-medium">TypeScript</span>
                                 </div>
                                 <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-fd-card border">
-                                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/fastify/fastify-original.svg" alt="Fastify" className="size-6" />
-                                    <span className="font-medium">Fastify</span>
+                                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg" alt="Python" className="size-6" />
+                                    <span className="font-medium">Python</span>
                                 </div>
                                 <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-fd-card border">
-                                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/bun/bun-original.svg" alt="Bun" className="size-6" />
-                                    <span className="font-medium">Bun</span>
+                                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/dart/dart-original.svg" alt="Dart" className="size-6" />
+                                    <span className="font-medium">Dart</span>
+                                </div>
+                                <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-fd-card border opacity-50">
+                                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/go/go-original.svg" alt="Go" className="size-6" />
+                                    <span className="font-medium">Go (soon)</span>
                                 </div>
                             </div>
                         </div>
                         <div>
-                            <h3 className="text-xl font-medium mb-4">A truly composable SDK.</h3>
                             <p className="text-fd-muted-foreground mb-6">
-                                Modular packages that work together — use what you need.
+                                Framework integrations included.
                             </p>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div className="p-4 rounded-xl bg-fd-card border">
-                                    <h4 className="font-medium mb-2">@vedatrace/core</h4>
-                                    <p className="text-sm text-fd-muted-foreground">Core logging primitives</p>
+                                    <h4 className="font-medium mb-2">Next.js</h4>
+                                    <p className="text-sm text-fd-muted-foreground">App Router & Pages Router</p>
                                 </div>
                                 <div className="p-4 rounded-xl bg-fd-card border">
-                                    <h4 className="font-medium mb-2">@vedatrace/node</h4>
-                                    <p className="text-sm text-fd-muted-foreground">Node.js runtime integration</p>
+                                    <h4 className="font-medium mb-2">Express</h4>
+                                    <p className="text-sm text-fd-muted-foreground">Middleware auto-logging</p>
                                 </div>
                                 <div className="p-4 rounded-xl bg-fd-card border">
-                                    <h4 className="font-medium mb-2">@vedatrace/ai</h4>
-                                    <p className="text-sm text-fd-muted-foreground">AI-powered debugging</p>
+                                    <h4 className="font-medium mb-2">Fastify</h4>
+                                    <p className="text-sm text-fd-muted-foreground">Plugin support</p>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    {/* Search Section */}
+                    {/* Log Query Section */}
                     <div className="col-span-full">
                         <h2 className="text-3xl text-brand mb-4 font-medium tracking-tight text-center">
-                            Enhance your search experience.
+                            Query logs, not dashboards.
                         </h2>
                         <p className="text-center text-fd-muted-foreground mb-6">
-                            Integrate with Orama Search and Algolia Search in your logs easily.
+                            Powerful query language to find what matters.
                         </p>
-                        <div className="rounded-xl border bg-fd-card p-6 max-w-md mx-auto">
-                            <div className="flex items-center gap-2 px-4 py-2 rounded-lg border bg-fd-muted text-fd-muted-foreground">
+                        <div className="rounded-xl border bg-fd-card p-6 max-w-2xl mx-auto font-mono text-sm">
+                            <div className="flex items-center gap-2 px-4 py-2 rounded-lg border bg-fd-muted text-fd-muted-foreground mb-4">
                                 <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                 </svg>
-                                <span>Search logs...</span>
+                                <span>level:error service:apiGateway</span>
                             </div>
-                            <div className="mt-4 space-y-2">
-                                <p className="text-sm font-medium">Getting Started</p>
-                                <p className="text-sm text-fd-muted-foreground">Use VedaTrace in your project.</p>
-                                <p className="text-sm font-medium">API Reference</p>
-                                <p className="text-sm text-fd-muted-foreground">REST API documentation.</p>
-                                <p className="text-sm font-medium">Configuration</p>
-                                <p className="text-sm text-fd-muted-foreground">Setup and configuration options.</p>
+                            <div className="space-y-2 text-fd-muted-foreground">
+                                <div className="flex gap-2">
+                                    <span className="text-red-400">ERROR</span>
+                                    <span className="text-fd-muted-foreground">apiGateway</span>
+                                    <span className="text-fd-muted-foreground">|</span>
+                                    <span>Payment processing failed</span>
+                                    <span className="text-fd-muted-foreground ml-auto">12:00:05</span>
+                                </div>
+                                <div className="flex gap-2">
+                                    <span className="text-yellow-400">WARN</span>
+                                    <span className="text-fd-muted-foreground">apiGateway</span>
+                                    <span className="text-fd-muted-foreground">|</span>
+                                    <span>Rate limit approaching</span>
+                                    <span className="text-fd-muted-foreground ml-auto">12:00:04</span>
+                                </div>
+                                <div className="flex gap-2">
+                                    <span className="text-red-400">ERROR</span>
+                                    <span className="text-fd-muted-foreground">apiGateway</span>
+                                    <span className="text-fd-muted-foreground">|</span>
+                                    <span>Database connection timeout</span>
+                                    <span className="text-fd-muted-foreground ml-auto">12:00:02</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -549,7 +572,7 @@ npx vedatrace init
                                 </div>
                                 <h3 className="font-medium tracking-tight text-lg mb-2">Dart</h3>
                                 <p className="text-fd-muted-foreground text-sm text-center">
-                                    Dart and Flutter applications and services
+                                    Dart and Flutter applications
                                 </p>
                             </Link>
                             <div className="flex flex-col items-center p-6 bg-fd-card rounded-xl border opacity-75">
@@ -645,28 +668,28 @@ npx vedatrace init
 
                     {/* Footer CTA */}
                     <div className="col-span-full rounded-2xl p-8 bg-origin-border border bg-fd-card text-center">
-                        <h2 className="text-3xl font-medium mb-4">Build Better Logs</h2>
+                        <h2 className="text-3xl font-medium mb-4">Start logging in minutes</h2>
                         <p className="text-fd-muted-foreground mb-6 max-w-lg mx-auto">
-                            Light and gorgeous, just like it should be.
+                            No credit card. No complex setup. Just add the SDK and start logging.
                         </p>
                         <ul className="flex flex-wrap justify-center gap-6 mb-8 text-sm">
                             <li className="flex items-center gap-2">
                                 <svg className="size-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                 </svg>
-                                <span>Battery guaranteed</span>
+                                <span>1M logs free/month</span>
                             </li>
                             <li className="flex items-center gap-2">
                                 <svg className="size-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                 </svg>
-                                <span>Fully open-source</span>
+                                <span>5 minute setup</span>
                             </li>
                             <li className="flex items-center gap-2">
                                 <svg className="size-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                 </svg>
-                                <span>Within seconds</span>
+                                <span>No credit card</span>
                             </li>
                         </ul>
                         <div className="flex flex-wrap justify-center gap-4">
@@ -674,7 +697,7 @@ npx vedatrace init
                             <Link to="/docs/javascript-sdk"
                                   className="inline-flex justify-center px-5 py-3 rounded-lg font-medium tracking-tight transition-colors bg-fd-primary text-gray-100 text-brand-foreground max-sm:text-sm"
                             >
-                                Read docs
+                                Get Started
                             </Link>
                             <a
                                 href="https://github.com/kurtiz/vedatrace-docs"
@@ -723,47 +746,47 @@ npx vedatrace init
     );
 }
 
-function WriterDeveloperTabs({writerCode, developerCode, automationCode}: {writerCode: string, developerCode: string, automationCode: string}) {
-    const [activeTab, setActiveTab] = useState<'writer' | 'developer' | 'automation'>('writer');
+function SimpleAdvancedTabs({simpleCode, advancedCode, pipelineCode}: {simpleCode: string, advancedCode: string, pipelineCode: string}) {
+    const [activeTab, setActiveTab] = useState<'simple' | 'advanced' | 'pipeline'>('simple');
     
     return (
         <div className="rounded-xl border bg-fd-card overflow-hidden">
             <div className="flex border-b">
                 <button
-                    onClick={() => setActiveTab('writer')}
+                    onClick={() => setActiveTab('simple')}
                     className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
-                        activeTab === 'writer' 
+                        activeTab === 'simple' 
                             ? 'bg-fd-primary text-gray-100' 
                             : 'text-fd-muted-foreground hover:text-fd-foreground'
                     }`}
                 >
-                    Writer
+                    Simple
                 </button>
                 <button
-                    onClick={() => setActiveTab('developer')}
+                    onClick={() => setActiveTab('advanced')}
                     className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
-                        activeTab === 'developer' 
+                        activeTab === 'advanced' 
                             ? 'bg-fd-primary text-gray-100' 
                             : 'text-fd-muted-foreground hover:text-fd-foreground'
                     }`}
                 >
-                    Developer
+                    Advanced
                 </button>
                 <button
-                    onClick={() => setActiveTab('automation')}
+                    onClick={() => setActiveTab('pipeline')}
                     className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
-                        activeTab === 'automation' 
+                        activeTab === 'pipeline' 
                             ? 'bg-fd-primary text-gray-100' 
                             : 'text-fd-muted-foreground hover:text-fd-foreground'
                     }`}
                 >
-                    Automation
+                    Pipeline
                 </button>
             </div>
             <div className="p-4">
-                {activeTab === 'writer' && <DynamicCodeBlock lang="md" code={writerCode} />}
-                {activeTab === 'developer' && <DynamicCodeBlock lang="tsx" code={developerCode} />}
-                {activeTab === 'automation' && <DynamicCodeBlock lang="ts" code={automationCode} />}
+                {activeTab === 'simple' && <DynamicCodeBlock lang="ts" code={simpleCode} />}
+                {activeTab === 'advanced' && <DynamicCodeBlock lang="ts" code={advancedCode} />}
+                {activeTab === 'pipeline' && <DynamicCodeBlock lang="ts" code={pipelineCode} />}
             </div>
         </div>
     );
