@@ -1,58 +1,28 @@
 ---
 title: Introduction
-description: Welcome to VedaTrace, the simplified observability dashboard.
+description: Welcome to the VedaTrace documentation.
 ---
-import { Callout } from 'fumadocs-ui/components/callout';
+
 import { Card, Cards } from 'fumadocs-ui/components/card';
-import { Image } from 'fumadocs-ui/components/image';
 
-# VedaTrace: Observability, Simplified.
+## Welcome to VedaTrace
 
-A minimalist, edge-powered logging and observability platform designed to provide developers with **actionable signals for fixing bugs without the complexity of traditional dashboards.**
+VedaTrace is a universal logging solution designed for modern applications. It provides a simple, type-safe, and lightweight SDK for capturing and sending logs from your applications to the VedaTrace platform.
 
-Built on Cloudflare Workers for &lt;50ms latency and zero-cold-start ingestion, VedaTrace provides **AI-powered debugging** to analyze stack traces and context, suggesting fixes in plain English.
+### Key Features
 
-<Image
-  src="/images/dashboard-overview.png"
-  alt="VedaTrace Dashboard Overview"
-  width={1920}
-  height={1080}
-  // TODO: Replace with an actual screenshot of the VedaTrace dashboard overview
-/>
+- **Universal:** Works in Node.js, Cloudflare Workers, browsers, and more.
+- **Type-safe:** Full TypeScript support with autocomplete.
+- **Lightweight:** Minimal performance overhead.
+- **Developer-friendly:** Easy to use API and framework integrations.
 
-## Why VedaTrace?
+## Getting Started
 
-### Focus on what matters, leave the bloat behind.
-
-Traditional observability tools can be overwhelming. VedaTrace cuts through the noise, offering:
+To get started, choose the SDK for your programming language or explore the API reference.
 
 <Cards>
-  <Card title="Zero-Config PII Scrubbing" icon="Shield" description="Automatically redacts passwords, secrets, and keys by default, ensuring your sensitive data stays private." />
-  <Card title="Soft-Cap Policy" icon="Wallet" description="Prevents 'denial of wallet' by intelligently managing logs during spikes, keeping them in transient storage instead of dropping them or charging surprise overage fees." />
-  <Card title="Simple Search" icon="Search" description="No complex query languages to learn. Use a Google-like search interface to quickly find what you need." />
-  <Card title="No Vendor Lock-in" icon="Download" description="Your data is yours. Export it at any time, in any format." />
-  <Card title="Developer-First" icon="Code" description="Self-serve onboarding, intuitive SDKs, and clear documentation mean you're logging in seconds, not days." />
-  <Card title="Edge-Powered Performance" icon="Zap" description="Leveraging Cloudflare Workers for sub-50ms ingestion latency and zero cold starts, ensuring your logs are captured instantly." />
+  <Card title="JavaScript/TypeScript SDK" href="/docs/javascript-sdk" />
+  <Card title="Python SDK" href="/docs/python-sdk" />
+  <Card title="Dart SDK" href="/docs/dart-sdk" />
 </Cards>
-
-## Get Started with VedaTrace SDKs
-
-Integrate VedaTrace into your application with our easy-to-use SDKs. Choose your language:
-
-<Cards>
-  <Card title="JavaScript/TypeScript SDK" href="/docs/javascript-sdk" icon="FileCode" />
-  <Card title="Python SDK" href="/docs/python-sdk" icon="FileCode" />
-  <Card title="Dart SDK" href="/docs/dart-sdk" icon="FileCode" />
-</Cards>
-
-<Callout title="Coming Soon: HTTPS API Reference">
-  We are working on providing a comprehensive HTTPS API reference for direct integration.
-</Callout>
-
-## Future Development
-
-**TODO:** Add a section about future plans, roadmap, or upcoming features for VedaTrace.
-
----
-**TODO:** Add a section for testimonials or quotes from satisfied users.
 
