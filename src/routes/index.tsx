@@ -11,11 +11,11 @@ function Home() {
     <HomeLayout {...baseOptions()}>
       <main className="text-landing-foreground pt-4 pb-6 dark:text-landing-foreground-dark md:pb-12">
         {/* Hero Section */}
-        <div className="relative flex min-h-[600px] h-[70vh] max-h-[900px] border rounded-2xl overflow-hidden mx-auto w-full max-w-[1400px] bg-origin-border">
+        <div className="relative flex min-h-150 h-[70vh] max-h-225 border rounded-2xl overflow-hidden mx-auto w-full max-w-[1400px] bg-origin-border">
           {/* TODO: Replace with VedaTrace hero image */}
           <img
             alt="hero-image"
-            className="absolute top-[460px] left-[20%] max-w-[1200px] rounded-xl border-2 lg:top-[400px] invisible"
+            className="absolute top-115 left-[20%] max-w-300 rounded-xl border-2 lg:top-100 invisible"
             src="https://www.fumadocs.dev/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fhero-preview.24184d04.jpeg&w=1920&q=75"
             style={{ color: 'transparent' }}
           />
@@ -48,7 +48,7 @@ function Home() {
         </div>
 
         {/* Features Overview */}
-        <div className="grid grid-cols-1 gap-10 mt-12 px-6 mx-auto w-full max-w-[1400px] md:px-12 lg:grid-cols-2">
+        <div className="grid grid-cols-1 gap-10 mt-12 px-6 mx-auto w-full max-w-350 md:px-12 lg:grid-cols-2">
           <p className="text-2xl tracking-tight leading-snug font-light col-span-full md:text-3xl xl:text-4xl">
             VedaTrace is an <span className="text-brand font-medium">OpenTelemetry</span> tracing solution for{' '}
             <span className="text-brand font-medium">Developers</span>, beautifully designed for modern applications.
@@ -58,7 +58,7 @@ function Home() {
           {/* Quick Start Terminal */}
           <div className="p-8 bg-radial-[circle_at_top_center] from-25% to-brand-secondary/50 rounded-xl col-span-full">
             <h2 className="text-xl text-center text-brand font-mono font-bold uppercase mb-2">Try it out.</h2>
-            <div className="relative mt-4 w-full mx-auto max-w-[800px]">
+            <div className="relative mt-4 w-full mx-auto max-w-200">
               <div className="overflow-hidden rounded-md border bg-fd-background shadow-xl absolute bottom-5 right-4 z-10 animate-in fade-in slide-in-from-top-10">
                 <div className="relative flex h-6 flex-row items-center border-b bg-fd-muted px-4 text-xs text-fd-muted-foreground">
                   <p className="absolute inset-x-0 text-center">localhost:3000</p>
