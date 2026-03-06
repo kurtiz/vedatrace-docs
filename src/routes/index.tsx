@@ -3,6 +3,27 @@ import { HomeLayout } from 'fumadocs-ui/layouts/home';
 import { baseOptions } from '@/lib/layout.shared';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from 'fumadocs-ui/components/tabs';
 
+const jsCode = `npm install @vedatrace/sdk
+
+import { VedaTrace } from '@vedatrace/sdk';
+const vt = new VedaTrace("vt_key_...");
+
+vt.error("Payment failed", { userId: "123", amount: 50 });`;
+
+const pythonCode = `pip install vedatrace
+
+from vedatrace import VedaTrace
+vt = VedaTrace("vt_key_...")
+
+vt.error("Payment failed", {"userId": "123", "amount": 50})`;
+
+const cloudflareCode = `npm install @vedatrace/cloudflare
+
+import { VedaTrace } from '@vedatrace/cloudflare';
+const vt = new VedaTrace("vt_key_...");
+
+vt.error("Payment failed", { userId: "123", amount: 50 });`;
+
 export const Route = createFileRoute('/')({
     component: Home,
 });
@@ -16,7 +37,7 @@ function Home() {
                     className="relative flex min-h-150 h-[70vh] max-h-225 border rounded-2xl overflow-hidden mx-auto w-full max-w-350 bg-origin-border bg-[url('https://assets.vedatrace.dev/misc/ttten.svg')] bg-cover">
                     <img
                         alt="hero-image"
-                        className="absolute top-115 left-[20%] max-w-300 rounded-xl border-2 lg:top-90"
+                        className="absolute top-115 left-[35%] max-w-300 rounded-xl border-2 lg:top-90"
                         src="https://assets.vedatrace.dev/misc/vedatrace-dashboard.png"
                         style={{ color: 'transparent' }}
                     />
@@ -24,11 +45,11 @@ function Home() {
                         <p className="mt-12 text-xs text-brand font-medium rounded-full p-2 border border-brand/50 w-fit bg-fd-primary">
                             Minimalist log observability built on Cloudflare Workers
                         </p>
-                        <h1 className="text-4xl my-8 leading-tighter font-medium xl:text-5xl xl:mb-12 bg-fd-background w-fit p-3">
+                        <h1 className="text-4xl my-2 leading-tighter font-medium xl:text-5xl xl:mb-12 bg-fd-background w-fit p-3">
                             The anti-Sentry.<br className="md:hidden" />
                             The anti-Datadog.
                         </h1>
-                        <p className="text-lg mb-8 max-w-200 bg-fd-background p-3">
+                        <p className="text-lg mb-2 max-w-200 bg-fd-background p-3">
                             Stop wrestling with complex dashboards. Get the signal you need to fix bugs, not more noise to manage.
                         </p>
                         <div className="flex flex-row items-center justify-center gap-4 flex-wrap w-fit">
@@ -91,12 +112,9 @@ function Home() {
                                     </div>
                                     <pre className="text-sm">
                                         <code className="language-bash">
-                                            <span className="line">npm install @vedatrace/sdk</span>
-                                            <span className="line"></span>
-                                            <span className="line">import { VedaTrace } from '@vedatrace/sdk';</span>
-                                            <span className="line">const vt = new VedaTrace("vt_key_...");</span>
-                                            <span className="line"></span>
-                                            <span className="line">vt.error("Payment failed", { userId: "123", amount: 50 });</span>
+                                            {jsCode.split('\n').map((line, i) => (
+                                                <span key={i} className="line">{line}</span>
+                                            ))}
                                         </code>
                                     </pre>
                                 </div>
@@ -133,12 +151,9 @@ function Home() {
                                     </div>
                                     <pre className="text-sm">
                                         <code className="language-python">
-                                            <span className="line">pip install vedatrace</span>
-                                            <span className="line"></span>
-                                            <span className="line">from vedatrace import VedaTrace</span>
-                                            <span className="line">vt = VedaTrace("vt_key_...")</span>
-                                            <span className="line"></span>
-                                            <span className="line">vt.error("Payment failed", {"{"} "userId": "123", "amount": 50 {"}"});</span>
+                                            {pythonCode.split('\n').map((line, i) => (
+                                                <span key={i} className="line">{line}</span>
+                                            ))}
                                         </code>
                                     </pre>
                                 </div>
@@ -175,12 +190,9 @@ function Home() {
                                     </div>
                                     <pre className="text-sm">
                                         <code className="language-javascript">
-                                            <span className="line">npm install @vedatrace/cloudflare</span>
-                                            <span className="line"></span>
-                                            <span className="line">import { VedaTrace } from '@vedatrace/cloudflare';</span>
-                                            <span className="line">const vt = new VedaTrace("vt_key_...");</span>
-                                            <span className="line"></span>
-                                            <span className="line">vt.error("Payment failed", { userId: "123", amount: 50 });</span>
+                                            {cloudflareCode.split('\n').map((line, i) => (
+                                                <span key={i} className="line">{line}</span>
+                                            ))}
                                         </code>
                                     </pre>
                                 </div>
@@ -251,7 +263,7 @@ function Home() {
                                 className="flex flex-col p-6 bg-fd-card rounded-xl border hover:bg-fd-accent transition-colors"
                             >
                                 <h3 className="font-medium tracking-tight text-lg mb-3">Edge Ingestion</h3>
-                                <p className="text-fd-muted-foreground text-sm">Process logs in <50ms without slowing down your app</p>
+                                <p className="text-fd-muted-foreground text-sm">Process logs in {'<'}50ms without slowing down your app</p>
                             </Link>
                             <Link
                                 to="/docs/auto-scrubbing"
