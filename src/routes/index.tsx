@@ -173,7 +173,8 @@ function Home() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="rounded-xl p-6 bg-fd-card border">
                                 <p className="text-lg mb-4 italic text-fd-foreground">
-                                    "VedaTrace cut our log costs by 80% while giving us better debugging capabilities. The AI debugger is a game-changer for our team."
+                                    "VedaTrace cut our log costs by 80% while giving us better debugging capabilities.
+                                    The AI debugger is a game-changer for our team."
                                 </p>
                                 <div className="flex items-center gap-3">
                                     <img
@@ -189,7 +190,8 @@ function Home() {
                             </div>
                             <div className="rounded-xl p-6 bg-fd-card border">
                                 <p className="text-lg mb-4 italic text-fd-foreground">
-                                    "Finally, logging that doesn't feel like navigating a spaceship cockpit. Simple, fast, and just works."
+                                    "Finally, logging that doesn't feel like navigating a spaceship cockpit. Simple,
+                                    fast, and just works."
                                 </p>
                                 <div className="flex items-center gap-3">
                                     <img
@@ -222,8 +224,10 @@ function Home() {
                             </div>
                             <div className="rounded-xl overflow-hidden border bg-fd-card">
                                 <div className="w-full aspect-video bg-fd-muted flex items-center justify-center">
-                                    <svg className="size-12 text-fd-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                    <svg className="size-12 text-fd-muted-foreground" fill="none" viewBox="0 0 24 24"
+                                         stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
+                                              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                                     </svg>
                                 </div>
                                 <div className="p-4">
@@ -233,8 +237,10 @@ function Home() {
                             </div>
                             <div className="rounded-xl overflow-hidden border bg-fd-card">
                                 <div className="w-full aspect-video bg-fd-muted flex items-center justify-center">
-                                    <svg className="size-12 text-fd-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                                    <svg className="size-12 text-fd-muted-foreground" fill="none" viewBox="0 0 24 24"
+                                         stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
+                                              d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
                                     </svg>
                                 </div>
                                 <div className="p-4">
@@ -242,46 +248,6 @@ function Home() {
                                     <p className="text-sm text-fd-muted-foreground">Get notified instantly</p>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-
-                    {/* Configuration Section */}
-                    <div className="col-span-full">
-                        <h2 className="text-3xl text-brand mb-4 font-medium tracking-tight text-center">
-                            Configure, don't complicate.
-                        </h2>
-                        <p className="text-center text-fd-muted-foreground mb-6">
-                            Smart defaults out of the box. Tweak only what you need.
-                        </p>
-                        <div className="rounded-xl border bg-fd-card p-4 font-mono text-sm">
-                            <pre className="overflow-x-auto text-fd-muted-foreground">
-                                <code>{`// vedatrace.config.js
-export default {
-  // Your API key from dashboard
-  apiKey: process.env.VEDATRACE_API_KEY,
-  
-  // Service name for grouping
-  service: 'my-app',
-  
-  // Log levels to send
-  levels: ['error', 'warn', 'info'],
-  
-  // Sample 50% of debug logs in production
-  sampling: {
-    debug: process.env.NODE_ENV === 'production' ? 0.5 : 1
-  },
-  
-  // Auto-scrub sensitive data
-  scrub: {
-    email: true,
-    creditCard: true,
-    ipAddress: true
-  },
-  
-  // Flush interval (ms)
-  flushInterval: 1000
-}`}</code>
-                            </pre>
                         </div>
                     </div>
 
@@ -293,7 +259,7 @@ export default {
                         <p className="text-center text-fd-muted-foreground mb-6">
                             Start with one line. Scale with child loggers, batching, and more.
                         </p>
-                        <SimpleAdvancedTabs 
+                        <SimpleAdvancedTabs
                             simpleCode={simpleLogCode}
                             advancedCode={advancedLogCode}
                             pipelineCode={pipelineLogCode}
@@ -310,26 +276,34 @@ export default {
                                 </p>
                                 <ul className="space-y-2 text-sm">
                                     <li className="flex items-start gap-2">
-                                        <svg className="size-5 text-green-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                        <svg className="size-5 text-green-500 shrink-0 mt-0.5" fill="none"
+                                             viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                                  d="M5 13l4 4L19 7"/>
                                         </svg>
                                         <span>{'<'}5ms ingestion latency</span>
                                     </li>
                                     <li className="flex items-start gap-2">
-                                        <svg className="size-5 text-green-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                        <svg className="size-5 text-green-500 shrink-0 mt-0.5" fill="none"
+                                             viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                                  d="M5 13l4 4L19 7"/>
                                         </svg>
                                         <span>Zero cold starts</span>
                                     </li>
                                     <li className="flex items-start gap-2">
-                                        <svg className="size-5 text-green-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                        <svg className="size-5 text-green-500 shrink-0 mt-0.5" fill="none"
+                                             viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                                  d="M5 13l4 4L19 7"/>
                                         </svg>
                                         <span>Global edge network</span>
                                     </li>
                                     <li className="flex items-start gap-2">
-                                        <svg className="size-5 text-green-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                        <svg className="size-5 text-green-500 shrink-0 mt-0.5" fill="none"
+                                             viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                                  d="M5 13l4 4L19 7"/>
                                         </svg>
                                         <span>Async, non-blocking</span>
                                     </li>
@@ -342,26 +316,34 @@ export default {
                                 </p>
                                 <ul className="space-y-2 text-sm">
                                     <li className="flex items-start gap-2">
-                                        <svg className="size-5 text-green-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                        <svg className="size-5 text-green-500 shrink-0 mt-0.5" fill="none"
+                                             viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                                  d="M5 13l4 4L19 7"/>
                                         </svg>
                                         <span>Auto PII scrubbing</span>
                                     </li>
                                     <li className="flex items-start gap-2">
-                                        <svg className="size-5 text-green-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                        <svg className="size-5 text-green-500 shrink-0 mt-0.5" fill="none"
+                                             viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                                  d="M5 13l4 4L19 7"/>
                                         </svg>
                                         <span>GDPR compliant</span>
                                     </li>
                                     <li className="flex items-start gap-2">
-                                        <svg className="size-5 text-green-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                        <svg className="size-5 text-green-500 shrink-0 mt-0.5" fill="none"
+                                             viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                                  d="M5 13l4 4L19 7"/>
                                         </svg>
                                         <span>End-to-end encryption</span>
                                     </li>
                                     <li className="flex items-start gap-2">
-                                        <svg className="size-5 text-green-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                        <svg className="size-5 text-green-500 shrink-0 mt-0.5" fill="none"
+                                             viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                                  d="M5 13l4 4L19 7"/>
                                         </svg>
                                         <span>Custom redaction rules</span>
                                     </li>
@@ -374,26 +356,34 @@ export default {
                                 </p>
                                 <ul className="space-y-2 text-sm">
                                     <li className="flex items-start gap-2">
-                                        <svg className="size-5 text-green-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                        <svg className="size-5 text-green-500 shrink-0 mt-0.5" fill="none"
+                                             viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                                  d="M5 13l4 4L19 7"/>
                                         </svg>
                                         <span>No log drops ever</span>
                                     </li>
                                     <li className="flex items-start gap-2">
-                                        <svg className="size-5 text-green-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                        <svg className="size-5 text-green-500 shrink-0 mt-0.5" fill="none"
+                                             viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                                  d="M5 13l4 4L19 7"/>
                                         </svg>
                                         <span>1M free logs/month</span>
                                     </li>
                                     <li className="flex items-start gap-2">
-                                        <svg className="size-5 text-green-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                        <svg className="size-5 text-green-500 shrink-0 mt-0.5" fill="none"
+                                             viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                                  d="M5 13l4 4L19 7"/>
                                         </svg>
                                         <span>$0.50/1M after</span>
                                     </li>
                                     <li className="flex items-start gap-2">
-                                        <svg className="size-5 text-green-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                        <svg className="size-5 text-green-500 shrink-0 mt-0.5" fill="none"
+                                             viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                                  d="M5 13l4 4L19 7"/>
                                         </svg>
                                         <span>No credit card needed</span>
                                     </li>
@@ -404,30 +394,42 @@ export default {
 
                     {/* SDKs Section */}
                     <div className="col-span-full">
-                        <h2 className="text-3xl text-brand mb-8 font-medium tracking-tight text-center">SDKs for every stack.</h2>
+                        <h2 className="text-3xl text-brand mb-8 font-medium tracking-tight text-center">SDKs for every
+                            stack.</h2>
                         <div className="mb-8">
                             <p className="text-fd-muted-foreground mb-6">
                                 First-party SDKs for major languages. More coming soon.
                             </p>
                             <div className="flex flex-wrap gap-4 justify-center">
                                 <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-fd-card border">
-                                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg" alt="JavaScript" className="size-6" />
+                                    <img
+                                        src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg"
+                                        alt="JavaScript" className="size-6"/>
                                     <span className="font-medium">JavaScript</span>
                                 </div>
                                 <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-fd-card border">
-                                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/typescript/typescript-original.svg" alt="TypeScript" className="size-6" />
+                                    <img
+                                        src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/typescript/typescript-original.svg"
+                                        alt="TypeScript" className="size-6"/>
                                     <span className="font-medium">TypeScript</span>
                                 </div>
                                 <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-fd-card border">
-                                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg" alt="Python" className="size-6" />
+                                    <img
+                                        src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg"
+                                        alt="Python" className="size-6"/>
                                     <span className="font-medium">Python</span>
                                 </div>
                                 <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-fd-card border">
-                                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/dart/dart-original.svg" alt="Dart" className="size-6" />
+                                    <img
+                                        src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/dart/dart-original.svg"
+                                        alt="Dart" className="size-6"/>
                                     <span className="font-medium">Dart</span>
                                 </div>
-                                <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-fd-card border opacity-50">
-                                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/go/go-original.svg" alt="Go" className="size-6" />
+                                <div
+                                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-fd-card border opacity-50">
+                                    <img
+                                        src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/go/go-original.svg"
+                                        alt="Go" className="size-6"/>
                                     <span className="font-medium">Go (soon)</span>
                                 </div>
                             </div>
@@ -462,9 +464,11 @@ export default {
                             Powerful query language to find what matters.
                         </p>
                         <div className="rounded-xl border bg-fd-card p-6 max-w-2xl mx-auto font-mono text-sm">
-                            <div className="flex items-center gap-2 px-4 py-2 rounded-lg border bg-fd-muted text-fd-muted-foreground mb-4">
+                            <div
+                                className="flex items-center gap-2 px-4 py-2 rounded-lg border bg-fd-muted text-fd-muted-foreground mb-4">
                                 <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                                 </svg>
                                 <span>level:error service:apiGateway</span>
                             </div>
@@ -674,20 +678,26 @@ export default {
                         </p>
                         <ul className="flex flex-wrap justify-center gap-6 mb-8 text-sm">
                             <li className="flex items-center gap-2">
-                                <svg className="size-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                <svg className="size-5 text-green-500" fill="none" viewBox="0 0 24 24"
+                                     stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                          d="M5 13l4 4L19 7"/>
                                 </svg>
-                                <span>1M logs free/month</span>
+                                <span>500K logs free/month</span>
                             </li>
                             <li className="flex items-center gap-2">
-                                <svg className="size-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                <svg className="size-5 text-green-500" fill="none" viewBox="0 0 24 24"
+                                     stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                          d="M5 13l4 4L19 7"/>
                                 </svg>
                                 <span>5 minute setup</span>
                             </li>
                             <li className="flex items-center gap-2">
-                                <svg className="size-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                <svg className="size-5 text-green-500" fill="none" viewBox="0 0 24 24"
+                                     stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                          d="M5 13l4 4L19 7"/>
                                 </svg>
                                 <span>No credit card</span>
                             </li>
@@ -746,17 +756,21 @@ export default {
     );
 }
 
-function SimpleAdvancedTabs({simpleCode, advancedCode, pipelineCode}: {simpleCode: string, advancedCode: string, pipelineCode: string}) {
+function SimpleAdvancedTabs({simpleCode, advancedCode, pipelineCode}: {
+    simpleCode: string,
+    advancedCode: string,
+    pipelineCode: string
+}) {
     const [activeTab, setActiveTab] = useState<'simple' | 'advanced' | 'pipeline'>('simple');
-    
+
     return (
         <div className="rounded-xl border bg-fd-card overflow-hidden">
             <div className="flex border-b">
                 <button
                     onClick={() => setActiveTab('simple')}
                     className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
-                        activeTab === 'simple' 
-                            ? 'bg-fd-primary text-gray-100' 
+                        activeTab === 'simple'
+                            ? 'bg-fd-primary text-gray-100'
                             : 'text-fd-muted-foreground hover:text-fd-foreground'
                     }`}
                 >
@@ -765,8 +779,8 @@ function SimpleAdvancedTabs({simpleCode, advancedCode, pipelineCode}: {simpleCod
                 <button
                     onClick={() => setActiveTab('advanced')}
                     className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
-                        activeTab === 'advanced' 
-                            ? 'bg-fd-primary text-gray-100' 
+                        activeTab === 'advanced'
+                            ? 'bg-fd-primary text-gray-100'
                             : 'text-fd-muted-foreground hover:text-fd-foreground'
                     }`}
                 >
@@ -775,8 +789,8 @@ function SimpleAdvancedTabs({simpleCode, advancedCode, pipelineCode}: {simpleCod
                 <button
                     onClick={() => setActiveTab('pipeline')}
                     className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
-                        activeTab === 'pipeline' 
-                            ? 'bg-fd-primary text-gray-100' 
+                        activeTab === 'pipeline'
+                            ? 'bg-fd-primary text-gray-100'
                             : 'text-fd-muted-foreground hover:text-fd-foreground'
                     }`}
                 >
@@ -784,9 +798,9 @@ function SimpleAdvancedTabs({simpleCode, advancedCode, pipelineCode}: {simpleCod
                 </button>
             </div>
             <div className="p-4">
-                {activeTab === 'simple' && <DynamicCodeBlock lang="ts" code={simpleCode} />}
-                {activeTab === 'advanced' && <DynamicCodeBlock lang="ts" code={advancedCode} />}
-                {activeTab === 'pipeline' && <DynamicCodeBlock lang="ts" code={pipelineCode} />}
+                {activeTab === 'simple' && <DynamicCodeBlock lang="ts" code={simpleCode}/>}
+                {activeTab === 'advanced' && <DynamicCodeBlock lang="ts" code={advancedCode}/>}
+                {activeTab === 'pipeline' && <DynamicCodeBlock lang="ts" code={pipelineCode}/>}
             </div>
         </div>
     );
