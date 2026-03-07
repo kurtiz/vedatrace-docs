@@ -16,6 +16,72 @@ export const Route = createRootRoute({
       {
         title: 'VedaTrace Docs',
       },
+      {
+        name: 'description',
+        content: 'Minimalist log observability built on Cloudflare Workers. Stop wrestling with complex dashboards. Get the signal you need to fix bugs, not more noise to manage.',
+      },
+      // Open Graph metadata
+      {
+        property: 'og:title',
+        content: 'VedaTrace - Minimalist Log Observability',
+      },
+      {
+        property: 'og:description',
+        content: 'Minimalist log observability built on Cloudflare Workers. Stop wrestling with complex dashboards. Get the signal you need to fix bugs, not more noise to manage.',
+      },
+      {
+        property: 'og:type',
+        content: 'website',
+      },
+      {
+        property: 'og:url',
+        content: 'https://vedatrace.dev',
+      },
+      {
+        property: 'og:image',
+        content: 'https://assets.vedatrace.dev/misc/docs-og-light.png',
+      },
+      {
+        property: 'og:image:width',
+        content: '1200',
+      },
+      {
+        property: 'og:image:height',
+        content: '630',
+      },
+      {
+        property: 'og:image:alt',
+        content: 'VedaTrace - Minimalist Log Observability',
+      },
+      {
+        property: 'og:site_name',
+        content: 'VedaTrace',
+      },
+      // Twitter metadata
+      {
+        name: 'twitter:card',
+        content: 'summary_large_image',
+      },
+      {
+        name: 'twitter:title',
+        content: 'VedaTrace - Minimalist Log Observability',
+      },
+      {
+        name: 'twitter:description',
+        content: 'Minimalist log observability built on Cloudflare Workers. Stop wrestling with complex dashboards. Get the signal you need to fix bugs, not more noise to manage.',
+      },
+      {
+        name: 'twitter:image',
+        content: 'https://assets.vedatrace.dev/misc/docs-og-light.png',
+      },
+      {
+        name: 'twitter:image:alt',
+        content: 'VedaTrace - Minimalist Log Observability',
+      },
+      {
+        name: 'twitter:site',
+        content: '@vedatrace',
+      },
     ],
     links: [{ rel: 'stylesheet', href: appCss }, {rel: "icon", href: "/logo.png"}],
   }),
