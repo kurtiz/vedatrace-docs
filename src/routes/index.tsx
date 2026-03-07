@@ -4,6 +4,7 @@ import {baseOptions} from '@/lib/layout.shared';
 import {CodeBlockTab, CodeBlockTabs, CodeBlockTabsList, CodeBlockTabsTrigger} from 'fumadocs-ui/components/codeblock';
 import {DynamicCodeBlock} from 'fumadocs-ui/components/dynamic-codeblock';
 import {useState} from 'react';
+import {DemoSection} from "@/components/demo-section";
 
 const jsCode = `// npm install @vedatrace/sdk
 
@@ -155,17 +156,7 @@ function Home() {
                         <h2 className="text-3xl text-brand mb-4 font-medium tracking-tight text-center">
                             See your logs live.
                         </h2>
-                        <div className="rounded-xl border bg-fd-card overflow-hidden font-mono text-sm">
-                            <div className="flex items-center gap-2 px-4 py-2 border-b bg-fd-muted">
-                                <div className="size-3 rounded-full bg-red-500"/>
-                                <div className="size-3 rounded-full bg-yellow-500"/>
-                                <div className="size-3 rounded-full bg-green-500"/>
-                                <span className="ml-2 text-fd-muted-foreground text-xs">VEDATRACE DASHBOARD</span>
-                            </div>
-                            <pre className="p-4 overflow-x-auto text-fd-muted-foreground">
-                                <code>{terminalCode}</code>
-                            </pre>
-                        </div>
+                        <DemoSection/>
                     </div>
 
                     {/* Testimonials Section */}
