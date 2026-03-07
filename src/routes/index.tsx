@@ -109,19 +109,19 @@ export const Route = createFileRoute('/')({
 function Home() {
     return (
         <HomeLayout {...baseOptions()}>
-            <main className="text-landing-foreground pt-4 pb-6 dark:text-landing-foreground-dark md:pb-12">
+            <main className="text-landing-foreground pt-4 dark:text-landing-foreground-dark">
                 {/* Hero Section - 60-Second Quickstart */}
                 <div
-                    className="relative flex min-h-150 h-[70vh] max-h-225 border rounded-2xl overflow-hidden mx-auto w-full max-w-350 bg-origin-border bg-[url('https://assets.vedatrace.dev/misc/ttten.svg')] bg-cover">
+                    className="relative flex min-h-150 h-[70vh] max-h-225 border rounded-2xl overflow-hidden justify-self-center w-full max-w-310 bg-origin-border bg-[url('https://assets.vedatrace.dev/misc/ttten.svg')] bg-cover">
                     <img
                         alt="hero-image"
-                        className="absolute top-115 left-[35%] max-w-300 rounded-xl border-2 lg:top-90"
+                        className="absolute top-115 left-[30%] md:left-[37%] md:max-w-300 max-w-150 rounded-xl border-2 lg:top-90"
                         src="https://assets.vedatrace.dev/misc/vedatrace-dashboard.png"
                         style={{color: 'transparent'}}
                     />
                     <div className="flex flex-col z-2 px-4 size-full md:p-12 max-md:items-center max-md:text-center">
                         <p className="mt-12 text-xs text-brand font-medium rounded-full p-2 border border-brand/50 w-fit bg-fd-primary">
-                            Minimalist log observability built on Cloudflare Workers
+                            Built for developers who want to fix bugs, not manage dashboards.
                         </p>
                         <h1 className="text-4xl my-2 leading-tighter font-medium xl:text-5xl xl:mb-12 bg-fd-background w-fit p-3">
                             The anti-Sentry.<br className="md:hidden"/>
@@ -131,10 +131,10 @@ function Home() {
                             Stop wrestling with complex dashboards. Get the signal you need to fix bugs, not more noise
                             to manage.
                         </p>
-                        <div className="flex flex-row items-center justify-center gap-4 flex-wrap w-fit">
+                        <div className="flex flex-row items-center justify-start gap-4 flex-wrap w-fit">
                             {/* @ts-ignore */}
                             <Link to="/docs/javascript-sdk"
-                                  className="inline-flex justify-center px-5 py-3 rounded-lg font-medium tracking-tight transition-colors bg-fd-primary text-gray-100 text-brand-foreground max-sm:text-sm"
+                                  className="inline-flex justify-start px-5 py-3 rounded-lg font-medium tracking-tight transition-colors bg-fd-primary text-gray-100 text-brand-foreground max-sm:text-sm"
                             >
                                 Get Started in 60 Seconds
                             </Link>
@@ -713,7 +713,7 @@ function Home() {
 
                     {/* GitHub Stars - kept at bottom */}
                     <div
-                        className="rounded-2xl text-sm p-6 bg-origin-border shadow-lg border bg-fd-card flex flex-col items-center text-center col-span-full"
+                        className="rounded-2xl text-sm p-6 bg-origin-border border bg-fd-card flex flex-col items-center text-center col-span-full"
                     >
                         <div className="flex flex-row items-center gap-4 mb-4">
                             <a
@@ -733,15 +733,131 @@ function Home() {
                                 </svg>
                                 <span className="font-medium">Star on GitHub</span>
                             </a>
-                            <div className="text-fd-muted-foreground text-sm">
-                                <span className="font-medium">100+</span> stars
-                            </div>
                         </div>
                         <p className="text-fd-muted-foreground max-w-150">
                             Join our growing community of developers using VedaTrace for their log observability needs.
                         </p>
                     </div>
                 </div>
+
+                {/* Footer */}
+                <footer className="col-span-full border-t bg-fd-card py-8 mt-12">
+                    <div className="max-w-350 mx-auto px-6 md:px-12">
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+                            <div className="md:col-span-1">
+                                <div className="flex items-center gap-2 mb-4">
+                                    <div className="rounded-full bg-brand flex items-center justify-center">
+                                        <img alt="logo" src="/logo.png" className="size-10"/>
+                                    </div>
+                                    <span className="font-bold text-lg text-brand">VedaTrace</span>
+                                </div>
+                                <p className="text-fd-muted-foreground text-sm mb-4">
+                                    Observability without the overkill. Built for developers who want to fix bugs, not
+                                    manage dashboards.
+                                </p>
+                                <div className="flex gap-3">
+                                    <a href="https://github.com/kurtiz/vedatrace-docs"
+                                       target="_blank"
+                                       rel="noreferrer noopener"
+                                       className="size-9 rounded-lg bg-fd-muted flex items-center justify-center hover:bg-fd-accent transition-colors"
+                                    >
+                                        <svg className="size-5 text-fd-primary" fill="currentColor" viewBox="0 0 24 24">
+                                            <path
+                                                d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12z"/>
+                                        </svg>
+                                    </a>
+                                    <a href="https://x.com/vedatrace"
+                                       className="size-9 rounded-lg bg-fd-muted flex items-center justify-center hover:bg-fd-accent transition-colors"
+                                    >
+                                        <svg className="size-5 text-fd-primary" fill="currentColor" viewBox="0 0 24 24">
+                                            <path
+                                                d="M22.46 6c-.77.35-1.6.58-2.46.69.88-.53 1.56-1.37 1.88-2.38-.83.5-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29 0 .34.04.67.11.98C8.28 9.09 5.11 7.38 3 4.79c-.37.63-.58 1.37-.58 2.15 0 1.49.75 2.81 1.91 3.56-.71 0-1.37-.2-1.95-.5v.03c0 2.08 1.48 3.82 3.44 4.21a4.22 4.22 0 0 1-1.93.07 4.28 4.28 0 0 0 4 2.98 8.521 8.521 0 0 1-5.33 1.84c-.34 0-.68-.02-1.02-.06C3.44 20.29 5.7 21 8.12 21 16 21 20.33 14.46 20.33 8.79c0-.19 0-.37-.01-.56.84-.6 1.56-1.36 2.14-2.23z"/>
+                                        </svg>
+                                    </a>
+                                    {/*<a href="#"*/}
+                                    {/*   className="size-9 rounded-lg bg-fd-muted flex items-center justify-center hover:bg-fd-accent transition-colors"*/}
+                                    {/*>*/}
+                                    {/*    <svg className="size-5 text-fd-primary" fill="currentColor" viewBox="0 0 24 24">*/}
+                                    {/*        <path*/}
+                                    {/*            d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zM5.838 12a6.162 6.162 0 1 1 12.324 0 6.162 6.162 0 0 1-12.324 0zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm4.965-10.405a1.44 1.44 0 1 1 2.881.001 1.44 1.44 0 0 1-2.881-.001z"/>*/}
+                                    {/*    </svg>*/}
+                                    {/*</a>*/}
+                                </div>
+                            </div>
+
+                            <div>
+                                <h4 className="font-medium text-sm mb-4">Product</h4>
+                                <ul className="space-y-2 text-sm">
+                                    <li>
+                                        <a href="https://vedatrace.dev/#features"
+                                           className="text-fd-muted-foreground hover:text-brand transition-colors">
+                                            Features
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="https://vedatrace.dev/changelog"
+                                           className="text-fd-muted-foreground hover:text-brand transition-colors">
+                                            Changelog
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="https://vedatrace.dev/roadmap"
+                                           className="text-fd-muted-foreground hover:text-brand transition-colors">
+                                            Roadmap
+                                        </a>
+                                    </li>
+                                    {/*<li><a href="#"*/}
+                                    {/*       className="text-fd-muted-foreground hover:text-brand transition-colors">Pricing</a>*/}
+                                    {/*</li>*/}
+                                </ul>
+                            </div>
+
+                            <div>
+                                <h4 className="font-medium text-sm mb-4">Company</h4>
+                                <ul className="space-y-2 text-sm">
+                                    {/*<li><a href="#"*/}
+                                    {/*       className="text-fd-muted-foreground hover:text-brand transition-colors">About</a>*/}
+                                    {/*</li>*/}
+                                    {/*<li><a href="#"*/}
+                                    {/*       className="text-fd-muted-foreground hover:text-brand transition-colors">Blog</a>*/}
+                                    {/*</li>*/}
+                                    <li><a href="mailto:vedatrace@gmail.com"
+                                           className="text-fd-muted-foreground hover:text-brand transition-colors">Contact</a>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div>
+                                <h4 className="font-medium text-sm mb-4">Legal</h4>
+                                <ul className="space-y-2 text-sm">
+                                    <li>
+                                        <a href="https://vedatrace.dev/privacy-policy" target="_blank"
+                                           className="text-fd-muted-foreground hover:text-brand transition-colors">
+                                            Privacy Policy
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="https://vedatrace.dev/terms-and-conditions" target="_blank"
+                                           className="text-fd-muted-foreground hover:text-brand transition-colors">
+                                            Terms
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div
+                            className="mt-8 pt-6 border-t flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-fd-muted-foreground">
+                            <p>© {new Date().getFullYear()} VedaTrace. All rights reserved.</p>
+                            <div className="flex gap-6">
+                                <a href="https://status.vedatrace.dev"
+                                   className="hover:text-brand transition-colors">Status</a>
+                                {/*<a href="#" className="hover:text-brand transition-colors">Security</a>*/}
+                                {/*<a href="#" className="hover:text-brand transition-colors">Support</a>*/}
+                            </div>
+                        </div>
+                    </div>
+                </footer>
             </main>
         </HomeLayout>
     );
