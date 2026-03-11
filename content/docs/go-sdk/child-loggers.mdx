@@ -1,0 +1,51 @@
+---
+title: 'Go: Child Loggers'
+description: Learn how to create and use child loggers in the Go SDK.
+---
+
+Child loggers allow you to create new logger instances that inherit the configuration of the parent logger with additional default metadata. This is useful for attaching request-scoped or component-scoped context to every log entry automatically.
+
+```go
+requestLogger := logger.Child(vedatrace.LogMetadata{
+    "request_id": "req-abc-123",
+    "user_id":    "user-456",
+})
+
+requestLogger.Info("Processing request")
+// This log will include request_id, user_id, and the default service
+// from the parent logger.
+
+requestLogger.Error("Request failed", err)
+// Error log also carries request_id and user_id automatically.
+```
+
+### Chaining Children
+
+Child loggers can themselves create children, merging metadata at each level.
+
+```go
+base := logger.Child(vedatrace.LogMetadata{"env": "production"})
+req  := base.Child(vedatrace.LogMetadata{"request_id": "req-123"})
+user := req.Child(vedatrace.LogMetadata{"user_id": "u-42"})
+
+user.Info("checkout started")
+// Includes: env, request_id, user_id
+```
+
+### HTTP Request Logging
+
+A common pattern is to create a child logger per request:
+
+```go
+func handler(w http.ResponseWriter, r *http.Request) {
+    log := logger.Child(vedatrace.LogMetadata{
+        "request_id": r.Header.Get("X-Request-ID"),
+        "method":     r.Method,
+        "path":       r.URL.Path,
+    })
+
+    log.Info("request received")
+    // ... handle request
+    log.Info("request complete", vedatrace.LogMetadata{"status": 200})
+}
+```

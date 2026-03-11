@@ -1,0 +1,88 @@
+---
+title: 'Go: API Reference'
+description: The complete API reference for the VedaTrace Go SDK.
+---
+
+### `vedatrace.New(cfg Config) (*Logger, error)`
+
+Creates a new logger that sends logs to the VedaTrace ingest API over HTTP. Returns an error if `APIKey` or `Service` is missing.
+
+See the [Configuration](/docs/go-sdk/configuration) page for all available `Config` fields.
+
+### `vedatrace.NewDev(service string) *Logger`
+
+Creates a console-only logger that writes to stderr. No API key required. Useful in development and testing.
+
+---
+
+### `logger.Debug(msg string, meta ...LogMetadata)`
+
+Logs a message at the `debug` level with optional metadata.
+
+### `logger.Info(msg string, meta ...LogMetadata)`
+
+Logs a message at the `info` level with optional metadata.
+
+### `logger.Warn(msg string, meta ...LogMetadata)`
+
+Logs a message at the `warn` level with optional metadata.
+
+### `logger.Error(msg string, err error, meta ...LogMetadata)`
+
+Logs a message at the `error` level. The `error` value is captured as structured `ErrorInfo` (message + type). Pass `nil` if there is no error.
+
+### `logger.Fatal(msg string, err error, meta ...LogMetadata)`
+
+Logs a message at the `fatal` level, flushes all pending logs synchronously, then panics. The `error` value includes a stack trace.
+
+---
+
+### `logger.Child(meta LogMetadata) *Logger`
+
+Returns a new `*Logger` that inherits the parent's config and merges `meta` into every log entry it emits. The parent logger is unaffected.
+
+- `meta` (LogMetadata): Key/value pairs to attach to all entries from this child.
+
+### `logger.Flush()`
+
+Blocks until all buffered log entries have been delivered to the transport. No-op when using console transport.
+
+### `logger.Stop()`
+
+Flushes all pending logs and stops the background goroutine. The logger must not be used after `Stop` returns.
+
+---
+
+### `vedatrace.CaptureError(err error) *ErrorInfo`
+
+Builds an `ErrorInfo` from a Go `error` with the error message and type name. Returns `nil` if `err` is `nil`.
+
+### `vedatrace.CaptureErrorWithStack(err error) *ErrorInfo`
+
+Same as `CaptureError` but also captures the current goroutine stack trace.
+
+---
+
+### Types
+
+```go
+// LogMetadata is a free-form map of key/value pairs attached to a log entry.
+type LogMetadata map[string]any
+
+// LogEntry is a single structured log record.
+type LogEntry struct {
+    Level     Level       `json:"level"`
+    Message   string      `json:"message"`
+    Service   string      `json:"service"`
+    Timestamp time.Time   `json:"timestamp"`
+    Metadata  LogMetadata `json:"metadata,omitempty"`
+    Error     *ErrorInfo  `json:"error,omitempty"`
+}
+
+// ErrorInfo holds structured information about a captured error.
+type ErrorInfo struct {
+    Message string `json:"message"`
+    Type    string `json:"type,omitempty"`
+    Stack   string `json:"stack,omitempty"`
+}
+```

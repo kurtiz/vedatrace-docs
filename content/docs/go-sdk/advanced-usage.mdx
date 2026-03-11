@@ -1,0 +1,119 @@
+---
+title: 'Go: Advanced Usage'
+description: Learn about advanced features of the VedaTrace Go SDK.
+---
+
+### Manual Flush
+
+In some cases you may want to manually flush pending logs — for example, before responding to a webhook or before a known high-latency operation.
+
+```go
+// Flush all pending logs synchronously
+logger.Flush()
+```
+
+### Graceful Shutdown
+
+The SDK runs a background goroutine to flush logs on the configured interval. Call `Stop` during application shutdown to drain the buffer and stop the goroutine cleanly.
+
+```go
+logger, _ := vedatrace.New(vedatrace.Config{
+    APIKey:  "your-api-key",
+    Service: "my-service",
+})
+defer logger.Stop() // always pair with Stop
+
+logger.Info("Processing...")
+```
+
+### Error Handling
+
+The SDK never panics on delivery failures. Use `OnError` to handle transport errors without interrupting your application.
+
+```go
+logger, _ := vedatrace.New(vedatrace.Config{
+    APIKey:  "your-api-key",
+    Service: "my-service",
+    OnError: func(err error, batch []vedatrace.LogEntry) {
+        // called when all retry attempts are exhausted
+        log.Printf("vedatrace: failed to deliver %d logs: %v", len(batch), err)
+    },
+    OnSuccess: func(batch []vedatrace.LogEntry) {
+        // called after each successful batch delivery
+    },
+})
+```
+
+### HTTP Request Logging
+
+The SDK ships no middleware. Wire it into any framework directly:
+
+```go
+// net/http
+func loggingMiddleware(logger *vedatrace.Logger, next http.Handler) http.Handler {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        start := time.Now()
+        rw := &statusWriter{ResponseWriter: w}
+        next.ServeHTTP(rw, r)
+        logger.Info("http request", vedatrace.LogMetadata{
+            "method":     r.Method,
+            "path":       r.URL.Path,
+            "status":     rw.status,
+            "latency_ms": time.Since(start).Milliseconds(),
+        })
+    })
+}
+
+type statusWriter struct {
+    http.ResponseWriter
+    status int
+}
+
+func (sw *statusWriter) WriteHeader(code int) {
+    sw.status = code
+    sw.ResponseWriter.WriteHeader(code)
+}
+```
+
+```go
+// Gin
+r.Use(func(c *gin.Context) {
+    start := time.Now()
+    c.Next()
+    logger.Info("http request", vedatrace.LogMetadata{
+        "method":     c.Request.Method,
+        "path":       c.FullPath(),
+        "status":     c.Writer.Status(),
+        "latency_ms": time.Since(start).Milliseconds(),
+    })
+})
+```
+
+```go
+// Echo
+e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
+    return func(c echo.Context) error {
+        start := time.Now()
+        err := next(c)
+        logger.Info("http request", vedatrace.LogMetadata{
+            "method":     c.Request().Method,
+            "path":       c.Request().URL.Path,
+            "status":     c.Response().Status,
+            "latency_ms": time.Since(start).Milliseconds(),
+        })
+        return err
+    }
+})
+```
+
+### Error Capture Helpers
+
+Use the built-in helpers to build structured error info manually:
+
+```go
+// Captures error message and type
+info := vedatrace.CaptureError(err)
+
+// Also captures the current goroutine stack trace
+info := vedatrace.CaptureErrorWithStack(err)
+```
