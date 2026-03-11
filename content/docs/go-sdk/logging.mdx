@@ -1,0 +1,60 @@
+---
+title: 'Go: Logging'
+description: Learn about the different log levels and how to use them in the Go SDK.
+---
+
+The VedaTrace Go SDK provides five log levels: `debug`, `info`, `warn`, `error`, and `fatal`.
+
+### All Log Levels
+
+```go
+logger.Debug("Debug info", vedatrace.LogMetadata{"query": "SELECT *"})
+logger.Info("User action", vedatrace.LogMetadata{"user_id": "123"})
+logger.Warn("Performance warning", vedatrace.LogMetadata{"duration_ms": 500})
+logger.Error("Error occurred", err, vedatrace.LogMetadata{"path": "/api/users"})
+logger.Fatal("Critical failure", err) // flushes all pending logs then panics
+```
+
+### Metadata
+
+Every log method accepts an optional `LogMetadata` map for attaching structured context to a log entry.
+
+```go
+logger.Info("Payment processed", vedatrace.LogMetadata{
+    "amount":   99.99,
+    "currency": "USD",
+    "user_id":  "u-42",
+})
+```
+
+### Error Logging
+
+`Error` and `Fatal` accept a Go `error` value. The SDK automatically captures the error message and type.
+
+```go
+if err != nil {
+    logger.Error("database query failed", err, vedatrace.LogMetadata{
+        "table": "users",
+    })
+}
+```
+
+### Field Redaction
+
+Sensitive fields are redacted before transmission using dot-notation paths set in `Config.RedactFields`.
+
+```go
+logger, _ := vedatrace.New(vedatrace.Config{
+    APIKey:       "your-api-key",
+    Service:      "payments",
+    RedactFields: []string{"password", "card.cvv"},
+})
+
+logger.Info("checkout", vedatrace.LogMetadata{
+    "password": "s3cr3t",       // → "[REDACTED]"
+    "card": map[string]any{
+        "cvv":   "123",         // → "[REDACTED]"
+        "last4": "4242",        // unchanged
+    },
+})
+```

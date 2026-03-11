@@ -1,0 +1,44 @@
+---
+title: 'Go: Configuration'
+description: Learn how to configure the VedaTrace SDK for Go.
+---
+
+The `vedatrace.New` function accepts a `Config` struct with the following fields:
+
+```go
+logger, err := vedatrace.New(vedatrace.Config{
+    APIKey:  "your-api-key",           // Required for HTTP transport
+    Service: "my-service",             // Required — attached to every log entry
+
+    Endpoint:      "https://ingest.vedatrace.dev/v1/logs",
+    BatchSize:     100,                // Flush after N logs
+    FlushInterval: 5 * time.Second,   // Flush after this duration
+    MaxRetries:    3,
+    RetryDelay:    1 * time.Second,
+
+    // Redaction
+    RedactFields: []string{"password", "card.cvv"},
+
+    // Callbacks
+    OnError: func(err error, batch []vedatrace.LogEntry) {
+        log.Printf("VedaTrace error: %v", err)
+    },
+    OnSuccess: func(batch []vedatrace.LogEntry) {
+        log.Printf("Sent %d logs", len(batch))
+    },
+})
+```
+
+### Configuration Options
+
+- `APIKey` (string, **required**): Your VedaTrace API key. Not required when `DisableHTTP` is `true`.
+- `Service` (string, **required**): The name of your service or application. Attached to every log entry.
+- `Endpoint` (string): The VedaTrace ingestion endpoint. Defaults to `https://ingest.vedatrace.dev/v1/logs`.
+- `BatchSize` (int): The number of logs to batch before sending. Defaults to `100`.
+- `FlushInterval` (time.Duration): The maximum time to wait before sending a batch. Defaults to `5s`.
+- `MaxRetries` (int): The maximum number of retry attempts after a failed send. Defaults to `3`.
+- `RetryDelay` (time.Duration): The base delay between retries (linear back-off). Defaults to `1s`.
+- `RedactFields` ([]string): Dot-notation field paths to redact before transmission, e.g. `"card.cvv"`.
+- `OnSuccess` (func): Called after each batch is successfully delivered.
+- `OnError` (func): Called after all retry attempts are exhausted.
+- `DisableHTTP` (bool): Forces console-only output. Useful in development and testing.

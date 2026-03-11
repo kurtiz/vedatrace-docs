@@ -31,6 +31,19 @@ config = VedaTraceConfig(
 logger = VedaTrace("YOUR_API_KEY", service="your-service", config=config)
 logger.info("Service started", {"env": "production"})`;
 
+const goCode = `// go get github.com/KOFI-GYIMAH/vedatrace-go
+
+import vedatrace "github.com/KOFI-GYIMAH/vedatrace-go"
+
+logger, _ := vedatrace.New(vedatrace.Config{
+  APIKey:  "your-api-key",
+  Service: "my-app",
+})
+defer logger.Stop()
+
+logger.Info("User signed up", vedatrace.LogMetadata{"userId": "123"})
+logger.Error("Payment failed", err, vedatrace.LogMetadata{"amount": 99.99})`;
+
 const dartCode = `// dart pub add vedatrace
 
 final logger = vedatrace(
@@ -417,11 +430,11 @@ function Home() {
                                     <span className="font-medium">Dart</span>
                                 </div>
                                 <div
-                                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-fd-card border opacity-50">
+                                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-fd-card border">
                                     <img
                                         src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/go/go-original.svg"
                                         alt="Go" className="size-6"/>
-                                    <span className="font-medium">Go (soon)</span>
+                                    <span className="font-medium">Go</span>
                                 </div>
                             </div>
                         </div>
@@ -493,10 +506,11 @@ function Home() {
                     <div className="col-span-full">
                         <h2 className="text-3xl text-brand mb-8 font-medium tracking-tight">Get Started</h2>
                         <CodeBlockTabs defaultValue="javascript" className="w-full">
-                            <CodeBlockTabsList className="grid grid-cols-3 mb-0">
+                            <CodeBlockTabsList className="grid grid-cols-4 mb-0">
                                 <CodeBlockTabsTrigger value="javascript">JavaScript</CodeBlockTabsTrigger>
                                 <CodeBlockTabsTrigger value="python">Python</CodeBlockTabsTrigger>
                                 <CodeBlockTabsTrigger value="dart">Dart</CodeBlockTabsTrigger>
+                                <CodeBlockTabsTrigger value="go">Go</CodeBlockTabsTrigger>
                             </CodeBlockTabsList>
                             <CodeBlockTab value="javascript">
                                 <DynamicCodeBlock
@@ -514,6 +528,11 @@ function Home() {
                                 <DynamicCodeBlock
                                     lang="dart"
                                     code={dartCode}/>
+                            </CodeBlockTab>
+                            <CodeBlockTab value="go">
+                                <DynamicCodeBlock
+                                    lang="go"
+                                    code={goCode}/>
                             </CodeBlockTab>
                         </CodeBlockTabs>
                     </div>
@@ -570,16 +589,22 @@ function Home() {
                                     Dart and Flutter applications
                                 </p>
                             </Link>
-                            <div className="flex flex-col items-center p-6 bg-fd-card rounded-xl border opacity-75">
-                                <div className="size-12 mb-4 bg-fd-muted rounded-lg flex items-center justify-center">
+                            {/* @ts-ignore */}
+                            <Link to="/docs/go-sdk"
+                                  className="flex flex-col items-center p-6 bg-fd-card rounded-xl border hover:bg-fd-accent transition-colors"
+                            >
+                                <div
+                                    className="size-12 mb-4 bg-fd-primary/10 rounded-lg flex items-center justify-center">
                                     <img
                                         alt="Go"
                                         className="size-10 rounded-md"
                                         src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/go/go-original.svg"/>
                                 </div>
                                 <h3 className="font-medium tracking-tight text-lg mb-2">Go</h3>
-                                <p className="text-fd-muted-foreground text-sm text-center">Coming soon</p>
-                            </div>
+                                <p className="text-fd-muted-foreground text-sm text-center">
+                                    Go applications and services
+                                </p>
+                            </Link>
                             {/* @ts-ignore */}
                             <Link to="/docs/javascript-sdk/framework-integrations"
                                   className="flex flex-col items-center p-6 bg-fd-card rounded-xl border hover:bg-fd-accent transition-colors"
