@@ -1,8 +1,8 @@
 {
   "index": "Introduction",
   "dashboard": "Getting Started",
-  "javascript-sdk": "TypeScript",
-  "dart-sdk": "Dart",
+  "javascript-sdk": "JavaScript",
   "python-sdk": "Python",
+  "dart-sdk": "Dart",
   "go-sdk": "Go"
 }
