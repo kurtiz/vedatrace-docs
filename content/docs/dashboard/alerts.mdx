@@ -1,0 +1,105 @@
+---
+title: 'Alert Notifications'
+description: Set up real-time alerts for Discord, Slack, and Telegram when errors occur.
+---
+
+Get notified instantly when your application generates errors or warnings. VedaTrace supports Discord, Slack, and Telegram alerts.
+
+## Supported Channels
+
+- **Discord** - Send alerts to a Discord channel via webhook
+- **Slack** - Send alerts to a Slack channel via webhook
+- **Telegram** - Send alerts directly to a Telegram chat via bot
+
+## Creating an Alert Rule
+
+1. Navigate to **Settings** → **Alert Notifications**
+2. Click **Create Alert Rule**
+3. Configure your alert
+
+{/* Screenshots coming soon */}
+
+## Alert Configuration
+
+### Channel Setup
+
+**For Discord/Slack:**
+- Enter your webhook URL
+- [Learn how to create a Discord webhook](https://support.discord.com/hc/en-us/articles/228383668)
+- [Learn how to create a Slack webhook](https://api.slack.com/messaging/webhooks)
+
+**For Telegram:**
+- Enter your Bot Token (from @BotFather)
+- Enter your Chat ID (your user ID or group ID)
+
+{/* Screenshot: Webhook Setup coming soon */}
+
+### Trigger Conditions
+
+Define when alerts should fire:
+
+- **Log Level** - Choose which levels trigger alerts (error, warn, fatal)
+- **Service** - Filter by specific service name
+- **Message Pattern** - Use regex to match specific error messages
+
+{/* Screenshot: Trigger Conditions coming soon */}
+
+### Cooldown
+
+Set a cooldown period to prevent alert spam. The system won't send another alert until the cooldown expires (in minutes).
+
+## Testing Your Alerts
+
+Once configured, test your alert to verify it works:
+
+1. Find your alert rule on the Alerts page
+2. Click the **Test** button
+3. Check your Discord/Slack/Telegram for the test message
+
+{/* Screenshot: Test Button coming soon */}
+
+## Managing Alerts
+
+### Enable/Disable
+
+Toggle alerts on or off without deleting the configuration.
+
+### Edit
+
+Modify alert settings at any time. If you need to update credentials, just re-enter them.
+
+### Delete
+
+Remove alerts you no longer need.
+
+## Example Use Cases
+
+### Critical Errors Only
+
+```
+Log Level: error, fatal
+Cooldown: 15 minutes
+```
+
+### Service-Specific Alerts
+
+```
+Service: auth
+Log Level: error
+Message Pattern: (authentication|login|jwt)
+```
+
+### Development Notifications
+
+```
+Log Level: warn, error
+Service: api
+Cooldown: 5 minutes
+```
+
+## Best Practices
+
+1. **Start with error/fatal** - Don't overwhelm yourself with warnings initially
+2. **Set appropriate cooldown** - 5-15 minutes is usually good
+3. **Use service filters** - Alert on critical services first
+4. **Test before relying on it** - Always test your alerts after setup

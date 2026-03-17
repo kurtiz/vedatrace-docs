@@ -1,5 +1,6 @@
 {
   "index": "Introduction",
+  "dashboard": "Getting Started",
   "javascript-sdk": "TypeScript",
   "dart-sdk": "Dart",
   "python-sdk": "Python",

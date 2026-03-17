@@ -1,0 +1,84 @@
+---
+title: 'Viewing and Searching Logs'
+description: Learn how to search, filter, and analyze your logs in the VedaTrace dashboard.
+---
+
+The Logs page is where you spend most of your time - viewing, searching, and analyzing your application logs.
+
+## Log Stream
+
+The main logs view shows a real-time stream of your logs:
+
+{/* Screenshot: Logs Page coming soon */}
+
+### Log Levels
+
+Each log entry has a severity level:
+
+| Level | Description | Color |
+|-------|-------------|-------|
+| `debug` | Detailed information for debugging | Gray |
+| `info` | General informational messages | Blue |
+| `warn` | Warning messages | Yellow |
+| `error` | Error messages | Red |
+| `fatal` | Critical errors causing application crash | Dark Red |
+
+## Filtering Logs
+
+### By Time Range
+
+Filter logs by selecting a time range from the dropdown:
+
+- **Today** - Logs from today
+- **Last 7 days** - Logs from the past week
+- **Last 30 days** - Logs from the past month
+
+{/* Screenshot: Time Range Filter coming soon */}
+
+### By Service
+
+If your application has multiple services, filter by service name:
+
+- `auth` - Authentication service
+- `payments` - Payment processing
+- `api` - API endpoints
+
+### By Log Level
+
+Click on the log level badges to filter by specific levels. You can combine multiple levels.
+
+## Searching Logs
+
+Use the search bar to find specific log entries:
+
+- **Full-text search** - Search for any text in log messages
+- **Case-insensitive** - Searches are not case-sensitive
+
+## Log Details
+
+Click on any log entry to see its full details:
+
+{/* Screenshot: Log Detail Panel coming soon */}
+
+The detail panel shows:
+- **Timestamp** - When the log was generated
+- **Level** - The severity level
+- **Full Message** - Complete log message including stack traces
+- **Metadata** - Additional context like environment, region, user ID
+
+## Metadata Fields
+
+Logs can include structured metadata:
+
+- `service` - The service or component that generated the log
+- `environment` - Deployment environment (production, staging)
+- `region` - Geographic region
+- `version` - Application version
+- Custom fields you define
+
+## Best Practices
+
+1. Use consistent log levels - reserve `fatal` for truly critical errors
+2. Include relevant metadata - service name, environment, user context
+3. Write descriptive log messages - make them searchable and meaningful
+4. Use the search feature - find specific errors or patterns quickly
