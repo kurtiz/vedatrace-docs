@@ -4,5 +4,13 @@
   "javascript-sdk": "JavaScript",
   "python-sdk": "Python",
   "dart-sdk": "Dart",
-  "go-sdk": "Go"
+  "go-sdk": "Go",
+  "pages": [
+    "index",
+    "dashboard",
+    "javascript-sdk",
+    "python-sdk",
+    "dart-sdk",
+    "go-sdk"
+  ]
 }

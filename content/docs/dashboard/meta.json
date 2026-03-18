@@ -1,0 +1,14 @@
+{
+  "index": "Getting Started with VedaTrace",
+  "projects": "Managing Projects",
+  "api-keys": "Managing API Keys",
+  "logs": "Viewing and Searching Logs",
+  "alerts": "Alert Notifications",
+  "pages": [
+    "index",
+    "projects",
+    "api-keys",
+    "logs",
+    "alerts"
+  ]
+}

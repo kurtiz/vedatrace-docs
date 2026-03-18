@@ -1,7 +1,16 @@
 {
+  "index": "Quick Start",
   "configuration": "Configuration",
   "logging": "Logging",
   "child-loggers": "Child Loggers",
   "advanced-usage": "Advanced Usage",
-  "api-reference": "API Reference"
+  "api-reference": "API Reference",
+  "pages": [
+    "index",
+    "configuration",
+    "logging",
+    "child-loggers",
+    "advanced-usage",
+    "api-reference"
+  ]
 }
