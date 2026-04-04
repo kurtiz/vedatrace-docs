@@ -1,0 +1,512 @@
+---
+title: 'React Integration'
+description: Complete guide to using VedaTrace with React applications.
+---
+
+The React integration provides context providers and hooks for easy client-side logging in React applications.
+
+## Installation
+
+```bash
+npm install vedatrace
+```
+
+## Quick Start
+
+```tsx
+import { VedaTraceProvider, useVedaTrace } from 'vedatrace/react'
+
+function App() {
+  return (
+    <VedaTraceProvider 
+      apiKey="your-api-key" 
+      service="my-react-app"
+      environment="production"
+    >
+      <YourApp />
+    </VedaTraceProvider>
+  )
+}
+```
+
+---
+
+## VedaTraceProvider
+
+Wrap your application with `VedaTraceProvider` to make the logger available throughout your component tree.
+
+### Parameters
+
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| `apiKey` | `string` | No | Your VedaTrace API key |
+| `service` | `string` | No | Default service name for all logs |
+| `environment` | `string` | No | Environment (e.g., `production`, `development`) |
+| `config` | `object` | No | Additional VedaTrace configuration |
+| `children` | `ReactNode` | Yes | Child components |
+
+### Config Options
+
+The `config` prop accepts all [VedaTrace configuration options](/docs/javascript-sdk/configuration) except `apiKey`, `service`, and `environment` (which are passed as separate props).
+
+### Examples
+
+#### Basic Setup
+
+```tsx
+import { VedaTraceProvider } from 'vedatrace/react'
+import { YourApp } from './YourApp'
+
+export default function App() {
+  return (
+    <VedaTraceProvider apiKey={process.env.VEDATRACE_API_KEY}>
+      <YourApp />
+    </VedaTraceProvider>
+  )
+}
+```
+
+#### With Custom Config
+
+```tsx
+<VedaTraceProvider 
+  apiKey="your-api-key"
+  service="dashboard"
+  environment="production"
+  config={{
+    batchSize: 50,
+    flushInterval: 3000,
+    debug: true,
+    redaction: {
+      paths: ['password', 'creditCard', 'token'],
+      mask: '[REDACTED]'
+    }
+  }}
+>
+  <YourApp />
+</VedaTraceProvider>
+```
+
+#### With Error Callbacks
+
+```tsx
+<VedaTraceProvider 
+  apiKey="your-api-key"
+  config={{
+    onError: (err) => {
+      console.error('Failed to send logs:', err)
+      // Send to external error tracking
+    },
+    onSuccess: () => {
+      console.log('Logs sent successfully')
+    }
+  }}
+>
+  <YourApp />
+</VedaTraceProvider>
+```
+
+---
+
+## useVedaTrace Hook
+
+Access the VedaTrace logger instance in any component within the provider tree.
+
+### Return Type
+
+`VedaTraceLoggerInterface`
+
+The returned logger has the following methods:
+- `debug(message, metadata?)`
+- `info(message, metadata?)`
+- `warn(message, metadata?)`
+- `error(message, metadata?)`
+- `fatal(message, metadata?)`
+- `child(defaults)`
+- `flush()`
+- `stop()`
+- `start()`
+
+### Examples
+
+#### Basic Logging
+
+```tsx
+import { useVedaTrace } from 'vedatrace/react'
+
+function UserProfile({ userId }: { userId: string }) {
+  const logger = useVedaTrace()
+
+  useEffect(() => {
+    logger.info('User profile loaded', { userId })
+  }, [userId])
+
+  useEffect(() => {
+    return () => {
+      logger.info('User profile unmounted', { userId })
+    }
+  }, [userId])
+
+  return <div>User: {userId}</div>
+}
+```
+
+#### Error Logging
+
+```tsx
+import { useVedaTrace } from 'vedatrace/react'
+
+function DataFetcher() {
+  const logger = useVedaTrace()
+
+  const fetchData = async () => {
+    try {
+      const response = await fetch('/api/data')
+      const data = await response.json()
+      logger.info('Data fetched successfully', { count: data.length })
+    } catch (error) {
+      logger.error('Failed to fetch data', { 
+        error: error instanceof Error ? error.message : String(error) 
+      })
+    }
+  }
+
+  return <button onClick={fetchData}>Fetch Data</button>
+}
+```
+
+#### Using Child Loggers
+
+```tsx
+import { useVedaTrace } from 'vedatrace/react'
+
+function OrderList() {
+  const logger = useVedaTrace().child({ component: 'OrderList' })
+
+  const orders = [
+    { id: '1', total: 99.99 },
+    { id: '2', total: 149.99 }
+  ]
+
+  useEffect(() => {
+    logger.info('Order list rendered', { orderCount: orders.length })
+  }, [])
+
+  return (
+    <ul>
+      {orders.map(order => (
+        <li key={order.id}>Order #{order.id}: ${order.total}</li>
+      ))}
+    </ul>
+  )
+}
+```
+
+---
+
+## useVedaTraceChild Hook
+
+Create a child logger with pre-configured metadata. Useful for components that need consistent context across multiple log entries.
+
+### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `metadata` | `LogMetadata` | Yes | Metadata to attach to all logs from this child logger |
+
+### Return Type
+
+`VedaTraceLoggerInterface` - A child logger instance
+
+### Examples
+
+#### Component with User Context
+
+```tsx
+import { useVedaTraceChild } from 'vedatrace/react'
+
+function UserProfile({ userId, userRole }: { userId: string; userRole: string }) {
+  const logger = useVedaTraceChild({ 
+    userId, 
+    userRole,
+    component: 'UserProfile' 
+  })
+
+  useEffect(() => {
+    logger.info('User profile loaded')
+  }, [])
+
+  const handleUpdate = () => {
+    logger.info('User updated their profile')
+  }
+
+  return (
+    <div>
+      <h1>Profile</h1>
+      <button onClick={handleUpdate}>Update</button>
+    </div>
+  )
+}
+```
+
+#### Form with Multiple Fields
+
+```tsx
+import { useVedaTraceChild } from 'vedatrace/react'
+
+function ContactForm() {
+  const logger = useVedaTraceChild({ component: 'ContactForm', formId: 'contact' })
+
+  const handleSubmit = async (formData: FormData) => {
+    logger.info('Form submission started')
+    
+    try {
+      await submitForm(formData)
+      logger.info('Form submitted successfully')
+    } catch (error) {
+      logger.error('Form submission failed', { 
+        error: error instanceof Error ? error.message : String(error) 
+      })
+    }
+  }
+
+  return <form onSubmit={handleSubmit}>{/* form fields */}</form>
+}
+```
+
+---
+
+## useVedaTraceLifecycle Hook
+
+Automatically log component mount and unmount events. Useful for tracking component lifecycle and debugging unnecessary re-renders.
+
+### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `componentName` | `string` | Yes | Name of the component for logging |
+| `metadata` | `LogMetadata` | No | Additional metadata to include |
+
+### Examples
+
+#### Basic Usage
+
+```tsx
+import { useVedaTraceLifecycle } from 'vedatrace/react'
+
+function Dashboard() {
+  useVedaTraceLifecycle('Dashboard')
+  
+  return <div>Dashboard Content</div>
+}
+```
+
+#### With Metadata
+
+```tsx
+import { useVedaTraceLifecycle } from 'vedatrace/react'
+
+function UserList({ userType }: { userType: 'admin' | 'user' }) {
+  useVedaTraceLifecycle('UserList', { userType })
+  
+  return <div>User List</div>
+}
+```
+
+#### Tracking Route Changes
+
+```tsx
+import { useVedaTraceLifecycle } from 'vedatrace/react'
+import { useLocation } from 'react-router-dom'
+
+function RouteLogger() {
+  const location = useLocation()
+  
+  useVedaTraceLifecycle('Route', { 
+    path: location.pathname,
+    search: location.search 
+  })
+  
+  return null  // This component renders nothing
+}
+```
+
+---
+
+## useVedaTraceError Hook
+
+Returns a function to easily log errors. Useful for try-catch blocks and error boundaries.
+
+### Return Type
+
+```typescript
+(error: Error, metadata?: LogMetadata) => void
+```
+
+### Examples
+
+#### Try-Catch Error Logging
+
+```tsx
+import { useVedaTraceError } from 'vedatrace/react'
+
+function ApiHandler() {
+  const logError = useVedaTraceError()
+
+  const processData = async () => {
+    try {
+      const result = await riskyOperation()
+      return result
+    } catch (err) {
+      if (err instanceof Error) {
+        logError(err, { operation: 'processData' })
+      } else {
+        logError(new Error(String(err)), { operation: 'processData' })
+      }
+    }
+  }
+
+  return <button onClick={processData}>Process</button>
+}
+```
+
+#### With Error Boundary
+
+```tsx
+import { useVedaTraceError } from 'vedatrace/react'
+
+function FallbackError({ error, resetError }: { error: Error; resetError: () => void }) {
+  const logError = useVedaTraceError()
+
+  useEffect(() => {
+    logError(error, { boundary: 'ErrorFallback' })
+  }, [error])
+
+  return (
+    <div>
+      <p>Something went wrong: {error.message}</p>
+      <button onClick={resetError}>Try Again</button>
+    </div>
+  )
+}
+```
+
+---
+
+## Complete Example
+
+Here's a full example showing all hooks working together:
+
+```tsx
+import React, { useEffect, useState } from 'react'
+import { 
+  VedaTraceProvider, 
+  useVedaTrace, 
+  useVedaTraceChild,
+  useVedaTraceLifecycle,
+  useVedaTraceError 
+} from 'vedatrace/react'
+
+// Wrap your app
+function App() {
+  return (
+    <VedaTraceProvider 
+      apiKey={process.env.VEDATRACE_API_KEY}
+      service="my-app"
+      environment="production"
+    >
+      <Dashboard />
+    </VedaTraceProvider>
+  )
+}
+
+// Track lifecycle
+function Dashboard() {
+  useVedaTraceLifecycle('Dashboard')
+
+  return (
+    <div>
+      <UserProfile userId="123" role="admin" />
+      <OrderList />
+    </div>
+  )
+}
+
+// Use logger directly
+function UserProfile({ userId, role }: { userId: string; role: string }) {
+  const logger = useVedaTrace()
+  const logError = useVedaTraceError()
+  const [user, setUser] = useState<User | null>(null)
+
+  useEffect(() => {
+    logger.info('Loading user', { userId })
+    
+    fetchUser(userId)
+      .then(setUser)
+      .catch(err => logError(err, { userId }))
+  }, [userId])
+
+  return <div>Hello, {user?.name}</div>
+}
+
+// Use child logger
+function OrderList() {
+  const logger = useVedaTraceChild({ component: 'OrderList' })
+  const [orders, setOrders] = useState<Order[]>([])
+
+  useEffect(() => {
+    logger.info('Fetching orders')
+    
+    fetchOrders()
+      .then(data => {
+        setOrders(data)
+        logger.info('Orders loaded', { count: data.length })
+      })
+      .catch(err => logger.error('Failed to load orders', { 
+        error: err.message 
+      }))
+  }, [])
+
+  return (
+    <ul>
+      {orders.map(order => (
+        <li key={order.id}>{order.name}</li>
+      ))}
+    </ul>
+  )
+}
+```
+
+---
+
+## TypeScript Types
+
+All types are exported from `vedatrace/react`:
+
+```typescript
+import type { 
+  VedaTraceProviderProps,
+  VedaTraceLoggerInterface 
+} from 'vedatrace/react'
+```
+
+### VedaTraceProviderProps
+
+```typescript
+interface VedaTraceProviderProps {
+  apiKey?: string
+  service?: string
+  environment?: string
+  config?: Omit<VedaTraceConfig, "apiKey" | "service" | "environment">
+  children: ReactNode
+}
+```
+
+### LogMetadata
+
+```typescript
+interface LogMetadata {
+  service?: string
+  [key: string]: unknown
+}
+```

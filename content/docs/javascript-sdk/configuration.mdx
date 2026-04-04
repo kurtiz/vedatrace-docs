@@ -6,15 +6,21 @@ description: Learn how to configure the VedaTrace SDK for JavaScript and TypeScr
 The `vedatrace` function accepts a configuration object with the following options:
 
 ```typescript
+import { vedatrace, RuntimeType } from 'vedatrace'
+
 const logger = vedatrace({
   apiKey: 'your-api-key',           // Required for HTTP transport
   service: 'my-service',            // Default service name
   endpoint: 'https://ingest.vedatrace.dev/v1/logs',
   environment: 'production',
   
+  // Runtime
+  autoStart: false,                 // Manual timer control
+  runtime: 'cloudflare' as RuntimeType,  // Force runtime
+  
   // Batching
   batchSize: 100,                   // Flush after N logs
-  flushInterval: 5000,              // Flush after N ms
+  flushInterval: 5000,             // Flush after N ms
   
   // Retry
   maxRetries: 3,
@@ -45,3 +51,5 @@ const logger = vedatrace({
 - `redaction` (object): An object with `paths` (an array of strings to redact) and `mask` (the string to replace them with).
 - `onError` (function): A callback function that is called when an error occurs while sending logs.
 - `onSuccess` (function): A callback function that is called when logs are sent successfully.
+- `autoStart` (boolean): Automatically start the flush timer when the logger is created. Defaults to `false` for edge runtimes (Cloudflare Workers, Deno, Bun) and `true` for Node.js and browser.
+- `runtime` (RuntimeType): Force a specific runtime environment. Options: `'node'`, `'browser'`, `'cloudflare'`, `'deno'`, `'bun'`, `'edge'`. Defaults to auto-detected runtime.

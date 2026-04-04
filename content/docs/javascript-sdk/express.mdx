@@ -1,0 +1,468 @@
+---
+title: 'Express.js Integration'
+description: Complete guide to using VedaTrace with Express.js applications.
+---
+
+The Express.js integration provides middleware that automatically logs HTTP requests and attaches a logger to each request object.
+
+## Installation
+
+```bash
+npm install vedatrace
+```
+
+## Quick Start
+
+```typescript
+import express from 'express'
+import { vedaTraceMiddleware } from 'vedatrace/express'
+
+const app = express()
+
+app.use(vedaTraceMiddleware({ 
+  apiKey: process.env.VEDATRACE_API_KEY 
+}))
+
+app.get('/', (req, res) => {
+  req.vedatrace.info('Home page visited')
+  res.json({ ok: true })
+})
+
+app.listen(3000)
+```
+
+---
+
+## vedaTraceMiddleware
+
+Express middleware that:
+1. Generates a unique request ID for each request
+2. Creates a child logger with request context
+3. Attaches the logger to `req.vedatrace`
+4. Automatically logs request/response lifecycle
+5. Flushes logs when response finishes
+
+### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `config` | `ExpressMiddlewareConfig` | No | Configuration object |
+
+### ExpressMiddlewareConfig Options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `apiKey` | `string` | - | Your VedaTrace API key |
+| `service` | `string` | - | Service name for this API |
+| `environment` | `string` | - | Environment (production, staging, etc.) |
+| `endpoint` | `string` | - | Custom ingestion endpoint |
+| `generateRequestId` | `function` | Auto-generated | Custom function to generate request IDs |
+| `requestMetadata` | `function` | `{}` | Function that returns additional metadata |
+| `logRequests` | `boolean` | `true` | Whether to log request start/complete |
+| `logBody` | `boolean` | `false` | Whether to include request body in logs |
+
+### generateRequestId Function
+
+```typescript
+// Function signature
+generateRequestId: (req: Request) => string
+
+// Default implementation
+(req) => `req_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`
+
+// Example: Use existing request ID header
+generateRequestId: (req) => req.headers['x-request-id'] as string 
+  || `req_${Date.now()}`
+```
+
+### requestMetadata Function
+
+```typescript
+// Function signature
+requestMetadata: (req: Request) => LogMetadata
+
+// Example: Add user and tenant context
+requestMetadata: (req) => ({
+  userId: req.headers['x-user-id'],
+  tenantId: req.headers['x-tenant-id'],
+  ip: req.ip,
+  userAgent: req.get('user-agent'),
+})
+```
+
+### Request Object Extension
+
+After applying the middleware, these properties are available on `req`:
+
+```typescript
+interface Request {
+  // VedaTrace logger instance for this request
+  vedatrace: VedaTraceLoggerInterface
+  
+  // Request ID for tracing
+  requestId?: string
+}
+```
+
+### Examples
+
+#### Basic Setup
+
+```typescript
+import express from 'express'
+import { vedaTraceMiddleware } from 'vedatrace/express'
+
+const app = express()
+
+app.use(vedaTraceMiddleware({ 
+  apiKey: process.env.VEDATRACE_API_KEY 
+}))
+
+app.get('/api/users', (req, res) => {
+  // Use the attached logger
+  req.vedatrace.info('Fetching users')
+  res.json({ users: [] })
+})
+
+app.listen(3000)
+```
+
+#### With Custom Service Name
+
+```typescript
+import express from 'express'
+import { vedaTraceMiddleware } from 'vedatrace/express'
+
+const app = express()
+
+app.use(vedaTraceMiddleware({
+  apiKey: process.env.VEDATRACE_API_KEY,
+  service: 'my-api',
+  environment: process.env.NODE_ENV || 'development'
+}))
+
+app.get('/health', (req, res) => {
+  req.vedatrace.debug('Health check requested')
+  res.json({ status: 'ok' })
+})
+```
+
+#### With Custom Request ID
+
+```typescript
+import express from 'express'
+import { vedaTraceMiddleware } from 'vedatrace/express'
+import { v4 as uuidv4 } from 'uuid'
+
+const app = express()
+
+app.use(vedaTraceMiddleware({
+  apiKey: process.env.VEDATRACE_API_KEY,
+  generateRequestId: (req) => {
+    // Use existing header or generate new UUID
+    return req.headers['x-request-id'] as string || uuidv4()
+  }
+}))
+
+app.get('/api/orders', (req, res) => {
+  // The requestId is now available on req
+  req.vedatrace.info('Fetching orders', { requestId: req.requestId })
+  res.json({ orders: [] })
+})
+```
+
+#### With Request Metadata
+
+```typescript
+import express from 'express'
+import { vedaTraceMiddleware } from 'vedatrace/express'
+
+const app = express()
+
+app.use(vedaTraceMiddleware({
+  apiKey: process.env.VEDATRACE_API_KEY,
+  requestMetadata: (req) => ({
+    tenantId: req.headers['x-tenant-id'],
+    userId: req.headers['x-user-id'],
+    userRole: req.headers['x-user-role'],
+    ip: req.ip,
+    userAgent: req.get('user-agent'),
+  })
+}))
+
+app.get('/api/profile', (req, res) => {
+  // Metadata is automatically included in all logs
+  req.vedatrace.info('Fetching profile')
+  res.json({ name: 'John' })
+})
+```
+
+#### With Request Body Logging
+
+```typescript
+import express from 'express'
+import { vedaTraceMiddleware } from 'vedatrace/express'
+
+const app = express()
+
+// Enable JSON body parsing
+app.use(express.json())
+
+app.use(vedaTraceMiddleware({
+  apiKey: process.env.VEDATRACE_API_KEY,
+  logBody: true  // ⚠️ Be careful with PII in request bodies
+}))
+
+app.post('/api/users', (req, res) => {
+  // req.body is now included in the log
+  req.vedatrace.info('Creating user', { 
+    email: req.body.email 
+  })
+  res.status(201).json({ id: '123' })
+})
+```
+
+#### Disable Request Logging
+
+```typescript
+import express from 'express'
+import { vedaTraceMiddleware } from 'vedatrace/express'
+
+const app = express()
+
+app.use(vedaTraceMiddleware({
+  apiKey: process.env.VEDATRACE_API_KEY,
+  logRequests: false  // Disable automatic request logging
+}))
+
+app.get('/api/events', (req, res) => {
+  // You can still use the logger manually
+  req.vedatrace.info('Custom log message')
+  res.json({ events: [] })
+})
+```
+
+---
+
+## Using the Logger
+
+### Basic Logging
+
+```typescript
+app.get('/api/products', (req, res) => {
+  req.vedatrace.info('Fetching products')
+  
+  const products = getProducts()
+  
+  req.vedatrace.info('Products found', { 
+    count: products.length 
+  })
+  
+  res.json(products)
+})
+```
+
+### Error Logging
+
+```typescript
+app.get('/api/users/:id', (req, res) => {
+  const userId = req.params.id
+  
+  try {
+    const user = getUser(userId)
+    
+    if (!user) {
+      req.vedatrace.warn('User not found', { userId })
+      return res.status(404).json({ error: 'Not found' })
+    }
+    
+    req.vedatrace.info('User fetched', { userId })
+    res.json(user)
+  } catch (error) {
+    req.vedatrace.error('Failed to fetch user', {
+      userId,
+      error: error instanceof Error ? error.message : String(error)
+    })
+    res.status(500).json({ error: 'Internal error' })
+  }
+})
+```
+
+### Using Child Loggers
+
+```typescript
+app.post('/api/orders', (req, res) => {
+  // Create child logger with order context
+  const logger = req.vedatrace.child({ 
+    endpoint: 'createOrder' 
+  })
+  
+  logger.info('Order creation started', {
+    items: req.body.items?.length || 0
+  })
+  
+  try {
+    const order = createOrder(req.body)
+    logger.info('Order created', { orderId: order.id })
+    res.status(201).json(order)
+  } catch (error) {
+    logger.error('Order creation failed', {
+      error: error.message
+    })
+    res.status(500).json({ error: 'Failed to create order' })
+  }
+})
+```
+
+---
+
+## Complete Example
+
+Here's a full Express application with VedaTrace logging:
+
+```typescript
+import express from 'express'
+import { vedaTraceMiddleware } from 'vedatrace/express'
+
+const app = express()
+
+// Parse JSON bodies
+app.use(express.json())
+
+// Apply VedaTrace middleware
+app.use(vedaTraceMiddleware({
+  apiKey: process.env.VEDATRACE_API_KEY,
+  service: 'my-api',
+  environment: process.env.NODE_ENV || 'development',
+  generateRequestId: (req) => req.headers['x-request-id'] as string 
+    || `req_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
+  requestMetadata: (req) => ({
+    tenantId: req.headers['x-tenant-id'],
+    userId: req.headers['x-user-id'],
+    ip: req.ip,
+    userAgent: req.get('user-agent'),
+  }),
+  logBody: false,  // Disable body logging for security
+}))
+
+// Health check
+app.get('/health', (req, res) => {
+  req.vedatrace.debug('Health check')
+  res.json({ status: 'ok' })
+})
+
+// User routes
+app.get('/api/users', (req, res) => {
+  req.vedatrace.info('Fetching users')
+  const users = [
+    { id: '1', name: 'Alice' },
+    { id: '2', name: 'Bob' }
+  ]
+  res.json(users)
+})
+
+app.post('/api/users', (req, res) => {
+  const { name, email } = req.body
+  
+  req.vedatrace.info('Creating user', { email })
+  
+  try {
+    const user = createUser({ name, email })
+    req.vedatrace.info('User created', { userId: user.id })
+    res.status(201).json(user)
+  } catch (error) {
+    req.vedatrace.error('Failed to create user', {
+      error: error instanceof Error ? error.message : String(error)
+    })
+    res.status(500).json({ error: 'Failed to create user' })
+  }
+})
+
+// Order routes
+app.get('/api/orders', (req, res) => {
+  const logger = req.vedatrace.child({ component: 'OrderList' })
+  
+  logger.info('Fetching orders')
+  const orders = getOrders()
+  
+  logger.info('Orders fetched', { count: orders.length })
+  res.json(orders)
+})
+
+app.post('/api/orders', (req, res) => {
+  const logger = req.vedatrace.child({ component: 'OrderCreate' })
+  
+  logger.info('Order creation started', {
+    itemCount: req.body.items?.length || 0
+  })
+  
+  try {
+    const order = createOrder(req.body)
+    logger.info('Order created', { orderId: order.id })
+    res.status(201).json(order)
+  } catch (error) {
+    logger.error('Order creation failed', {
+      error: error instanceof Error ? error.message : String(error)
+    })
+    res.status(500).json({ error: 'Failed to create order' })
+  }
+})
+
+// 404 handler
+app.use((req, res) => {
+  req.vedatrace.warn('Route not found', { 
+    path: req.path, 
+    method: req.method 
+  })
+  res.status(404).json({ error: 'Not found' })
+})
+
+// Error handler
+app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  req.vedatrace.error('Unhandled error', {
+    error: err.message,
+    stack: err.stack
+  })
+  res.status(500).json({ error: 'Internal server error' })
+})
+
+app.listen(3000, () => {
+  console.log('Server running on port 3000')
+})
+```
+
+---
+
+## TypeScript Types
+
+```typescript
+import type { 
+  ExpressMiddlewareConfig 
+} from 'vedatrace/express'
+```
+
+### ExpressMiddlewareConfig
+
+```typescript
+interface ExpressMiddlewareConfig extends VedaTraceConfig {
+  generateRequestId?: (req: Request) => string
+  requestMetadata?: (req: Request) => LogMetadata
+  logRequests?: boolean
+  logBody?: boolean
+}
+```
+
+### Extended Request Type
+
+The middleware extends Express's Request interface:
+
+```typescript
+declare global {
+  namespace Express {
+    interface Request {
+      vedatrace: VedaTraceLoggerInterface
+      requestId?: string
+    }
+  }
+}
+```

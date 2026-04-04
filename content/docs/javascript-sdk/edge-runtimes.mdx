@@ -1,0 +1,171 @@
+---
+title: 'Edge Runtimes'
+description: Learn how to use VedaTrace with edge runtimes like Cloudflare Workers, Deno, and Bun.
+---
+
+VedaTrace automatically detects and adapts to edge runtimes. This guide covers the supported runtimes and how to configure the SDK for optimal behavior.
+
+## Supported Runtimes
+
+VedaTrace automatically detects the following edge runtimes:
+
+- **Cloudflare Workers** - Serverless workers on Cloudflare's network
+- **Deno** - The secure JavaScript runtime
+- **Bun** - The all-in-one JavaScript runtime
+
+## Automatic Detection
+
+VedaTrace automatically detects which runtime your code is running on:
+
+```typescript
+import { detectRuntime, isEdgeRuntime } from 'vedatrace'
+
+const runtime = detectRuntime()
+// Returns: 'node' | 'browser' | 'cloudflare' | 'deno' | 'bun' | 'edge'
+
+const isEdge = isEdgeRuntime()
+// Returns: true for cloudflare, deno, bun, edge
+```
+
+## Timer Behavior
+
+Edge runtimes have restrictions on global timers that can prevent the process from exiting properly. VedaTrace handles this automatically:
+
+| Runtime | Timer Behavior |
+|---------|----------------|
+| Node.js | Timer starts automatically |
+| Browser | Timer starts automatically |
+| Cloudflare Workers | Timer disabled (autoStart=false) |
+| Deno | Timer disabled (autoStart=false) |
+| Bun | Timer disabled (autoStart=false) |
+
+## Cloudflare Workers
+
+VedaTrace works out of the box with Cloudflare Workers. The auto-detection automatically disables the flush timer to comply with edge runtime restrictions.
+
+```typescript
+// Just use normally - auto-detects edge runtime
+import { vedatrace } from 'vedatrace'
+
+const logger = vedatrace({
+  apiKey: process.env.VEDATRACE_API_KEY,
+  service: 'my-worker'
+})
+
+export default {
+  async fetch(request) {
+    logger.info('Request received', { url: request.url })
+    return new Response('Hello')
+  }
+}
+```
+
+### Manual Timer Control
+
+If you need more control, you can manually start the flush timer inside your handler:
+
+```typescript
+import { vedatrace } from 'vedatrace'
+
+const logger = vedatrace({
+  apiKey: process.env.VEDATRACE_API_KEY,
+  service: 'my-worker',
+  autoStart: false  // Disable auto-start
+})
+
+export default {
+  async fetch(request) {
+    logger.start()  // Start timer inside handler
+    logger.info('Request received', { url: request.url })
+    return new Response('Hello')
+  }
+}
+```
+
+## Deno
+
+VedaTrace works with Deno with automatic edge runtime detection:
+
+```typescript
+import { vedatrace } from 'vedatrace'
+
+const logger = vedatrace({
+  apiKey: Deno.env.get('VEDATRACE_API_KEY') ?? '',
+  service: 'my-deno-app'
+})
+
+logger.info('Deno app started')
+```
+
+## Bun
+
+VedaTrace works with Bun with automatic edge runtime detection:
+
+```typescript
+import { vedatrace } from 'vedatrace'
+
+const logger = vedatrace({
+  apiKey: process.env.VEDATRACE_API_KEY ?? '',
+  service: 'my-bun-app'
+})
+
+logger.info('Bun app started')
+```
+
+## Accessing Runtime Information
+
+You can access the detected runtime from the logger instance:
+
+```typescript
+const logger = vedatrace({ apiKey: 'xxx' })
+
+console.log(logger.runtime)
+// 'node' | 'browser' | 'cloudflare' | 'deno' | 'bun' | 'edge'
+```
+
+## Forcing a Runtime
+
+For testing or specific scenarios, you can force a specific runtime:
+
+```typescript
+const logger = vedatrace({
+  apiKey: 'xxx',
+  runtime: 'node'  // Force Node.js behavior
+})
+```
+
+## Manual Timer Control
+
+For edge runtimes, you can manually control the flush timer:
+
+```typescript
+const logger = vedatrace({
+  apiKey: 'xxx',
+  autoStart: false
+})
+
+// Start the timer when appropriate
+logger.start()
+
+// Do some work
+logger.info('Task 1')
+
+// Stop the timer when done
+logger.stop()
+```
+
+## Flush Interval for Edge
+
+The default flush interval is adjusted for edge runtimes:
+
+- **Edge runtimes**: 1000ms
+- **Node.js/Browser**: 5000ms
+
+You can override this in configuration:
+
+```typescript
+const logger = vedatrace({
+  apiKey: 'xxx',
+  flushInterval: 2000  // Custom interval
+})
+```

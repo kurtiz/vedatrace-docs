@@ -1,0 +1,496 @@
+---
+title: 'Next.js Integration'
+description: Complete guide to using VedaTrace with Next.js applications.
+---
+
+The Next.js integration provides utilities for both the App Router and Pages Router, with automatic request tracking and context enrichment.
+
+## Installation
+
+```bash
+npm install vedatrace
+```
+
+## Quick Start
+
+### App Router
+
+```typescript
+// app/api/users/route.ts
+import { withVedaTrace } from 'vedatrace/next'
+
+export const GET = withVedaTrace(async (req, { logger }) => {
+  logger.info('Fetching users')
+  return Response.json({ users: [] })
+}, { apiKey: process.env.VEDATRACE_API_KEY })
+```
+
+### Pages Router
+
+```typescript
+// pages/api/users.ts
+import { createVedaTraceLogger } from 'vedatrace/next'
+import type { NextApiRequest, NextApiResponse } from 'next'
+
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
+  const logger = createVedaTraceLogger({ 
+    apiKey: process.env.VEDATRACE_API_KEY 
+  })
+  
+  logger.info('API called', { method: req.method })
+  res.json({ ok: true })
+}
+```
+
+---
+
+## withVedaTrace
+
+Wrap a Next.js App Router handler with automatic request logging and context management.
+
+### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `handler` | `function` | Yes | The Next.js route handler function |
+| `config` | `NextJsConfig` | No | Configuration object |
+
+### Handler Function Signature
+
+```typescript
+(req: Request, ctx: NextJsContext) => Promise<Response> | Response
+```
+
+### NextJsContext
+
+```typescript
+interface NextJsContext {
+  logger: VedaTraceLoggerInterface  // Child logger with request context
+  requestId: string                    // Unique request ID
+}
+```
+
+### NextJsConfig Options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `apiKey` | `string` | - | Your VedaTrace API key |
+| `service` | `string` | - | Service name for this API |
+| `environment` | `string` | - | Environment (production, staging, etc.) |
+| `endpoint` | `string` | - | Custom ingestion endpoint |
+| `generateRequestId` | `function` | Auto-generated | Custom function to generate request IDs |
+| `requestMetadata` | `function` | `{}` | Function that returns additional metadata for each request |
+
+### generateRequestId Function
+
+```typescript
+// Custom request ID generator
+generateRequestId: () => string
+
+// Default implementation
+() => `req_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`
+```
+
+### requestMetadata Function
+
+```typescript
+// Function signature
+requestMetadata: (req: Request) => LogMetadata
+
+// Example: Add user info from headers
+requestMetadata: (req: Request) => ({
+  userId: req.headers.get('x-user-id'),
+  tenantId: req.headers.get('x-tenant-id'),
+})
+```
+
+### Examples
+
+#### Basic API Route
+
+```typescript
+// app/api/users/route.ts
+import { withVedaTrace } from 'vedatrace/next'
+import { getUsers } from '@/lib/users'
+
+export const GET = withVedaTrace(async (req, { logger }) => {
+  logger.info('Fetching users list')
+  
+  const users = await getUsers()
+  
+  return Response.json({ users })
+}, { 
+  apiKey: process.env.VEDATRACE_API_KEY,
+  service: 'users-api'
+})
+```
+
+#### POST Request with Error Handling
+
+```typescript
+// app/api/users/route.ts
+import { withVedaTrace } from 'vedatrace/next'
+
+export const POST = withVedaTrace(async (req, { logger }) => {
+  const body = await req.json()
+  
+  logger.info('Creating user', { email: body.email })
+  
+  try {
+    const user = await createUser(body)
+    logger.info('User created', { userId: user.id })
+    return Response.json(user, { status: 201 })
+  } catch (error) {
+    logger.error('Failed to create user', { 
+      error: error instanceof Error ? error.message : String(error) 
+    })
+    return Response.json({ error: 'Failed to create user' }, { status: 500 })
+  }
+}, { apiKey: process.env.VEDATRACE_API_KEY })
+```
+
+#### With Custom Request ID
+
+```typescript
+// app/api/orders/route.ts
+import { withVedaTrace } from 'vedatrace/next'
+
+export const GET = withVedaTrace(async (req, { logger, requestId }) => {
+  // Use the requestId for correlation
+  logger.info('Fetching orders', { requestId })
+  
+  const orders = await getOrders()
+  
+  return Response.json({ orders, requestId })
+}, {
+  apiKey: process.env.VEDATRACE_API_KEY,
+  generateRequestId: () => {
+    // Use existing header or generate new one
+    const existingId = req.headers.get('x-request-id')
+    return existingId || `order_${Date.now()}`
+  }
+})
+```
+
+#### With Custom Metadata
+
+```typescript
+// app/api/reports/route.ts
+import { withVedaTrace } from 'vedatrace/next'
+
+export const POST = withVedaTrace(async (req, { logger }) => {
+  const body = await req.json()
+  
+  logger.info('Generating report', { type: body.type })
+  
+  const report = await generateReport(body)
+  
+  return Response.json(report)
+}, {
+  apiKey: process.env.VEDATRACE_API_KEY,
+  requestMetadata: (req) => ({
+    tenantId: req.headers.get('x-tenant-id'),
+    userRole: req.headers.get('x-user-role'),
+    apiVersion: 'v2',
+  })
+})
+```
+
+---
+
+## createVedaTraceLogger
+
+Create a logger instance for Next.js Pages Router API routes.
+
+### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `config` | `VedaTraceConfig` | No | Standard VedaTrace configuration |
+
+### Return Type
+
+`VedaTraceLoggerInterface`
+
+### Examples
+
+#### Basic Pages Router Handler
+
+```typescript
+// pages/api/products.ts
+import { createVedaTraceLogger } from 'vedatrace/next'
+import type { NextApiRequest, NextApiResponse } from 'next'
+
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
+  const logger = createVedaTraceLogger({ 
+    apiKey: process.env.VEDATRACE_API_KEY,
+    service: 'products-api'
+  })
+  
+  if (req.method === 'GET') {
+    logger.info('Fetching products')
+    const products = getProducts()
+    res.json(products)
+  } else if (req.method === 'POST') {
+    logger.info('Creating product', { body: req.body })
+    const product = createProduct(req.body)
+    res.status(201).json(product)
+  }
+}
+```
+
+#### With Request Context
+
+```typescript
+// pages/api/orders/[id].ts
+import { createVedaTraceLogger } from 'vedatrace/next'
+import type { NextApiRequest, NextApiResponse } from 'next'
+
+export default async function handler(
+  req: NextApiRequest, 
+  res: NextApiResponse
+) {
+  const logger = createVedaTraceLogger({
+    apiKey: process.env.VEDATRACE_API_KEY,
+    service: 'orders-api'
+  })
+  
+  const orderId = req.query.id as string
+  const loggerWithContext = logger.child({ orderId })
+  
+  if (req.method === 'GET') {
+    loggerWithContext.info('Fetching order')
+    const order = await getOrder(orderId)
+    res.json(order)
+  }
+}
+```
+
+---
+
+## serverLogger
+
+A pre-configured server-side logger for use in Next.js Server Components and API routes.
+
+### Usage
+
+```typescript
+// app/page.tsx (Server Component)
+import { serverLogger } from 'vedatrace/next'
+
+export default async function Page() {
+  serverLogger.info('Rendering home page')
+  
+  return <div>Hello World</div>
+}
+```
+
+### Configuration
+
+The `serverLogger` is pre-configured with:
+
+```typescript
+{
+  service: 'nextjs-server'
+}
+```
+
+You can override the configuration by creating your own logger:
+
+```typescript
+// lib/logger.ts
+import { vedatrace } from 'vedatrace'
+
+export const serverLogger = vedatrace({
+  service: 'my-nextjs-app',
+  environment: process.env.NODE_ENV,
+  batchSize: 50,
+})
+```
+
+### Examples
+
+#### Server Component with Logging
+
+```typescript
+// app/dashboard/page.tsx
+import { serverLogger } from 'vedatrace/next'
+
+export default async function DashboardPage() {
+  serverLogger.info('Dashboard page requested')
+  
+  const data = await fetchDashboardData()
+  
+  serverLogger.info('Dashboard data fetched', { 
+    itemCount: data.items.length 
+  })
+  
+  return (
+    <div>
+      <h1>Dashboard</h1>
+      {/* Render data */}
+    </div>
+  )
+}
+```
+
+#### Server Action with Logging
+
+```typescript
+// app/actions.ts
+'use server'
+
+import { serverLogger } from 'vedatrace/next'
+
+export async function updateUser(formData: FormData) {
+  const userId = formData.get('userId')
+  
+  serverLogger.info('Updating user', { userId })
+  
+  try {
+    await updateUserInDb(userId, formData)
+    serverLogger.info('User updated successfully', { userId })
+    return { success: true }
+  } catch (error) {
+    serverLogger.error('Failed to update user', { 
+      userId,
+      error: error instanceof Error ? error.message : String(error)
+    })
+    return { success: false, error: 'Update failed' }
+  }
+}
+```
+
+#### Layout with Logging
+
+```typescript
+// app/layout.tsx
+import { serverLogger } from 'vedatrace/next'
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  serverLogger.info('Root layout rendered')
+  
+  return (
+    <html>
+      <body>{children}</body>
+    </html>
+  )
+}
+```
+
+---
+
+## Combined Example
+
+Here's how to use all three utilities together in a Next.js project:
+
+```typescript
+// ============================================
+// App Router - withVedaTrace
+// ============================================
+
+// app/api/users/route.ts
+import { withVedaTrace } from 'vedatrace/next'
+
+export const GET = withVedaTrace(async (req, { logger, requestId }) => {
+  logger.info('GET /api/users')
+  
+  const users = await db.user.findMany()
+  
+  return Response.json({ users, requestId })
+}, { apiKey: process.env.VEDATRACE_API_KEY })
+
+export const POST = withVedaTrace(async (req, { logger }) => {
+  const body = await req.json()
+  logger.info('Creating user', { email: body.email })
+  
+  const user = await db.user.create({ data: body })
+  return Response.json(user)
+}, { apiKey: process.env.VEDATRACE_API_KEY })
+
+
+// ============================================
+// Pages Router - createVedaTraceLogger  
+// ============================================
+
+// pages/api/orders.ts
+import { createVedaTraceLogger } from 'vedatrace/next'
+import type { NextApiRequest, NextApiResponse } from 'next'
+
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
+  const logger = createVedaTraceLogger({
+    apiKey: process.env.VEDATRACE_API_KEY,
+    service: 'orders-api'
+  })
+  
+  logger.info(`${req.method} /api/orders`)
+  
+  if (req.method === 'GET') {
+    const orders = getOrders()
+    res.json(orders)
+  }
+}
+
+
+// ============================================
+// Server Components - serverLogger
+// ============================================
+
+// app/admin/page.tsx
+import { serverLogger } from 'vedatrace/next'
+
+export default async function AdminPage() {
+  serverLogger.info('Admin page rendered', { 
+    timestamp: Date.now() 
+  })
+  
+  return <div>Admin Dashboard</div>
+}
+
+
+// ============================================
+// Server Actions
+// ============================================
+
+// app/actions/createOrder.ts
+'use server'
+
+import { serverLogger } from 'vedatrace/next'
+
+export async function createOrder(data: OrderData) {
+  serverLogger.info('Creating order', { 
+    items: data.items.length 
+  })
+  
+  // ... create order logic
+}
+```
+
+---
+
+## TypeScript Types
+
+```typescript
+import type { 
+  NextJsConfig,
+  NextJsContext 
+} from 'vedatrace/next'
+```
+
+### NextJsConfig
+
+```typescript
+interface NextJsConfig extends VedaTraceConfig {
+  generateRequestId?: () => string
+  requestMetadata?: () => LogMetadata
+}
+```
+
+### NextJsContext
+
+```typescript
+interface NextJsContext {
+  logger: VedaTraceLoggerInterface
+  requestId: string
+}
+```

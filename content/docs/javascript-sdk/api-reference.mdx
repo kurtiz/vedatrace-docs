@@ -55,3 +55,43 @@ Manually flushes the log buffer, sending all pending logs to the configured tran
 ### `logger.stop()`
 
 Stops the background timer that automatically flushes logs. This is useful for graceful shutdown in long-running applications.
+
+### `logger.start()`
+
+Manually starts the background timer that flushes logs. This is useful for edge runtimes (Cloudflare Workers, Deno, Bun) where you need to control when the timer starts.
+
+### `logger.runtime`
+
+Returns the detected runtime environment. Returns one of: `'node'`, `'browser'`, `'cloudflare'`, `'deno'`, `'bun'`, `'edge'`.
+
+```typescript
+const logger = vedatrace({ apiKey: 'xxx' })
+console.log(logger.runtime) // 'node', 'browser', 'cloudflare', 'deno', 'bun', or 'edge'
+```
+
+### Runtime Detection Functions
+
+VedaTrace also exports runtime detection functions:
+
+#### `detectRuntime()`
+
+Returns the detected runtime environment as a string.
+
+```typescript
+import { detectRuntime } from 'vedatrace'
+
+const runtime = detectRuntime()
+// Returns: 'node' | 'browser' | 'cloudflare' | 'deno' | 'bun' | 'edge'
+```
+
+#### `isEdgeRuntime()`
+
+Returns `true` if the current runtime is an edge runtime (Cloudflare Workers, Deno, Bun, or edge).
+
+```typescript
+import { isEdgeRuntime } from 'vedatrace'
+
+if (isEdgeRuntime()) {
+  console.log('Running on edge runtime')
+}
+```

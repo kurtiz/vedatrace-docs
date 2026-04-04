@@ -4,7 +4,11 @@
   "logging": "Logging",
   "child-loggers": "Child Loggers",
   "framework-integrations": "Framework Integrations",
+  "react": "React",
+  "nextjs": "Next.js",
+  "express": "Express.js",
   "advanced-usage": "Advanced Usage",
+  "edge-runtimes": "Edge Runtimes",
   "api-reference": "API Reference",
   "pages": [
     "index",
@@ -12,7 +16,11 @@
     "logging",
     "child-loggers",
     "advanced-usage",
+    "edge-runtimes",
     "framework-integrations",
+    "react",
+    "nextjs",
+    "express",
     "api-reference"
   ]
 }
