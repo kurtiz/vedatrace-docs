@@ -59,6 +59,18 @@ logger.warn('Cache miss', metadata: <String, Object?>{'key': 'user:42'});
 await logger.flush();
 logger.dispose()`;
 
+const phpCode = `// composer require vedatrace/vedatrace-php
+
+use VedaTrace\VedaTrace;
+
+$logger = VedaTrace::create([
+    'apiKey' => 'your-api-key',
+    'service' => 'my-app',
+]);
+
+$logger->info('User signed up', ['userId' => '123']);
+$logger->error('Payment failed', ['error' => $err->getMessage()]);`;
+
 const terminalCode = `> vedatrace dev
 [12:00:01] INFO Starting VedaTrace collector on :8787
 [12:00:02] INFO Connected to Cloudflare Workers
@@ -425,9 +437,15 @@ function Home() {
                                 </div>
                                 <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-fd-card border">
                                     <img
-                                        src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/dart/dart-original.svg"
-                                        alt="Dart" className="size-6"/>
-                                    <span className="font-medium">Dart</span>
+                                        src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/go/go-original.svg"
+                                        alt="Go" className="size-6"/>
+                                    <span className="font-medium">Go</span>
+                                </div>
+                                <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-fd-card border">
+                                    <img
+                                        src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/php/php-original.svg"
+                                        alt="PHP" className="size-6"/>
+                                    <span className="font-medium">PHP</span>
                                 </div>
                                 <div
                                     className="flex items-center gap-2 px-4 py-2 rounded-lg bg-fd-card border">
@@ -452,8 +470,8 @@ function Home() {
                                     <p className="text-sm text-fd-muted-foreground">Middleware auto-logging</p>
                                 </div>
                                 <div className="p-4 rounded-xl bg-fd-card border">
-                                    <h4 className="font-medium mb-2">Fastify</h4>
-                                    <p className="text-sm text-fd-muted-foreground">Plugin support</p>
+                                    <h4 className="font-medium mb-2">Laravel</h4>
+                                    <p className="text-sm text-fd-muted-foreground">Service Provider & Facade</p>
                                 </div>
                             </div>
                         </div>
@@ -506,9 +524,10 @@ function Home() {
                     <div className="col-span-full">
                         <h2 className="text-3xl text-brand mb-8 font-medium tracking-tight">Get Started</h2>
                         <CodeBlockTabs defaultValue="javascript" className="w-full">
-                            <CodeBlockTabsList className="grid grid-cols-4 mb-0">
+                            <CodeBlockTabsList className="grid grid-cols-5 mb-0">
                                 <CodeBlockTabsTrigger value="javascript">JavaScript</CodeBlockTabsTrigger>
                                 <CodeBlockTabsTrigger value="python">Python</CodeBlockTabsTrigger>
+                                <CodeBlockTabsTrigger value="php">PHP</CodeBlockTabsTrigger>
                                 <CodeBlockTabsTrigger value="dart">Dart</CodeBlockTabsTrigger>
                                 <CodeBlockTabsTrigger value="go">Go</CodeBlockTabsTrigger>
                             </CodeBlockTabsList>
@@ -522,6 +541,12 @@ function Home() {
                                 <DynamicCodeBlock
                                     lang="py"
                                     code={pythonCode}
+                                />
+                            </CodeBlockTab>
+                            <CodeBlockTab value="php">
+                                <DynamicCodeBlock
+                                    lang="php"
+                                    code={phpCode}
                                 />
                             </CodeBlockTab>
                             <CodeBlockTab value="dart">
@@ -603,6 +628,22 @@ function Home() {
                                 <h3 className="font-medium tracking-tight text-lg mb-2">Go</h3>
                                 <p className="text-fd-muted-foreground text-sm text-center">
                                     Go applications and services
+                                </p>
+                            </Link>
+                            {/* @ts-ignore */}
+                            <Link to="/docs/php-sdk"
+                                  className="flex flex-col items-center p-6 bg-fd-card rounded-xl border hover:bg-fd-accent transition-colors"
+                            >
+                                <div
+                                    className="size-12 mb-4 bg-fd-primary/10 rounded-lg flex items-center justify-center">
+                                    <img
+                                        alt="PHP"
+                                        className="size-10 rounded-md"
+                                        src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/php/php-original.svg"/>
+                                </div>
+                                <h3 className="font-medium tracking-tight text-lg mb-2">PHP / Laravel</h3>
+                                <p className="text-fd-muted-foreground text-sm text-center">
+                                    PHP and Laravel applications
                                 </p>
                             </Link>
                             {/* @ts-ignore */}
