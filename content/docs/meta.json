@@ -3,6 +3,7 @@
   "dashboard": "Getting Started",
   "javascript-sdk": "JavaScript",
   "python-sdk": "Python",
+  "php-sdk": "PHP",
   "dart-sdk": "Dart",
   "go-sdk": "Go",
   "pages": [
@@ -10,6 +11,7 @@
     "dashboard",
     "javascript-sdk",
     "python-sdk",
+    "php-sdk",
     "dart-sdk",
     "go-sdk"
   ]

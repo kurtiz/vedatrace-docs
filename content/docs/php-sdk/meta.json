@@ -1,0 +1,20 @@
+{
+  "index": "Quick Start",
+  "development-mode": "Development Mode",
+  "configuration": "Configuration",
+  "logging": "Logging",
+  "child-loggers": "Child Loggers",
+  "framework-integrations": "Framework Integrations",
+  "advanced-usage": "Advanced Usage",
+  "api-reference": "API Reference",
+  "pages": [
+    "index",
+    "development-mode",
+    "configuration",
+    "logging",
+    "child-loggers",
+    "framework-integrations",
+    "advanced-usage",
+    "api-reference"
+  ]
+}
