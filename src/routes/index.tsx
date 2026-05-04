@@ -416,7 +416,7 @@ function Home() {
                             <p className="text-fd-muted-foreground mb-6">
                                 First-party SDKs for major languages. More coming soon.
                             </p>
-                            <div className="flex flex-wrap gap-4 justify-center">
+                            <div className="flex flex-wrap gap-4">
                                 <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-fd-card border">
                                     <img
                                         src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg"
@@ -450,9 +450,9 @@ function Home() {
                                 <div
                                     className="flex items-center gap-2 px-4 py-2 rounded-lg bg-fd-card border">
                                     <img
-                                        src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/go/go-original.svg"
+                                        src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/dart/dart-original.svg"
                                         alt="Go" className="size-6"/>
-                                    <span className="font-medium">Go</span>
+                                    <span className="font-medium">Dart</span>
                                 </div>
                             </div>
                         </div>
@@ -709,7 +709,7 @@ function Home() {
                         <h2 className="text-3xl text-brand mb-8 font-medium tracking-tight">Advanced Usage</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {/* @ts-ignore */}
-                            <Link to="/docs/javascript-sdk"
+                            <Link to="/docs/dashboard/api-keys"
                                   className="flex flex-col p-6 bg-fd-card rounded-xl border hover:bg-fd-accent transition-colors"
                             >
                                 <h3 className="font-medium tracking-tight text-lg mb-3">API Reference</h3>
@@ -717,10 +717,10 @@ function Home() {
                                     endpoint</p>
                             </Link>
                             {/* @ts-ignore */}
-                            <Link to="/docs/javascript-sdk"
+                            <Link to="/docs/dashboard/alerts"
                                   className="flex flex-col p-6 bg-fd-card rounded-xl border hover:bg-fd-accent transition-colors"
                             >
-                                <h3 className="font-medium tracking-tight text-lg mb-3">Webhooks</h3>
+                                <h3 className="font-medium tracking-tight text-lg mb-3">Alerts</h3>
                                 <p className="text-fd-muted-foreground text-sm">Receive real-time notifications for log
                                     events</p>
                             </Link>
@@ -748,7 +748,7 @@ function Home() {
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                                           d="M5 13l4 4L19 7"/>
                                 </svg>
-                                <span>5 minute setup</span>
+                                <span> Less than 5 minute setup</span>
                             </li>
                             <li className="flex items-center gap-2">
                                 <svg className="size-5 text-green-500" fill="none" viewBox="0 0 24 24"
