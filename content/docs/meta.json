@@ -6,6 +6,7 @@
   "php-sdk": "PHP",
   "dart-sdk": "Dart",
   "go-sdk": "Go",
+  "support": "Support",
   "pages": [
     "index",
     "dashboard",
@@ -13,6 +14,7 @@
     "python-sdk",
     "php-sdk",
     "dart-sdk",
-    "go-sdk"
+    "go-sdk",
+    "support"
   ]
 }
