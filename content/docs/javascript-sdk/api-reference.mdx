@@ -52,13 +52,34 @@ Creates a new child logger instance with default metadata.
 
 Manually flushes the log buffer, sending all pending logs to the configured transports. Returns a `Promise` that resolves when the flush is complete.
 
+In Cloudflare Workers, it's recommended to pass `waitUntil` in the config instead of calling `logger.flush()` manually, so flushing happens automatically.
+
 ### `logger.stop()`
 
 Stops the background timer that automatically flushes logs. This is useful for graceful shutdown in long-running applications.
 
 ### `logger.start()`
 
-Manually starts the background timer that flushes logs. This is useful for edge runtimes (Cloudflare Workers, Deno, Bun) where you need to control when the timer starts.
+Manually starts the background timer that flushes logs.
+
+### `logger.withContext(ctx)`
+
+Attaches a Cloudflare `ExecutionContext` to the logger. The SDK uses `ctx.waitUntil()` to keep the worker alive during log flushing.
+
+```typescript
+const logger = vedatrace({
+  apiKey: env.VEDATRACE_API_KEY,
+  service: 'my-worker',
+})
+
+export default {
+  async fetch(request, env, ctx) {
+    logger.withContext(ctx)
+    logger.info('Request received')
+    return new Response('OK')
+  }
+}
+```
 
 ### `logger.runtime`
 
@@ -68,6 +89,29 @@ Returns the detected runtime environment. Returns one of: `'node'`, `'browser'`,
 const logger = vedatrace({ apiKey: 'xxx' })
 console.log(logger.runtime) // 'node', 'browser', 'cloudflare', 'deno', 'bun', or 'edge'
 ```
+
+### Configuration Options
+
+The `vedatrace(config)` function accepts the following configuration options:
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `apiKey` | `string` | — | Your VedaTrace API key |
+| `service` | `string` | — | Default service name for all logs |
+| `endpoint` | `string` | `https://ingest.vedatrace.dev/v1/logs` | Custom ingestion endpoint |
+| `environment` | `string` | — | Deployment environment (e.g. `production`, `development`) |
+| `batchSize` | `number` | `100` | Number of logs to buffer before flushing |
+| `flushInterval` | `number` | `5000` (Node/Browser) or `1000` (edge) | Max time (ms) between flushes |
+| `immediateFlush` | `boolean` | `false` | Flush immediately on each log, bypassing batching |
+| `waitUntil` | `function` | — | Cloudflare Workers `waitUntil` for automatic flush |
+| `maxRetries` | `number` | `3` | Max retries per batch on transport failure |
+| `retryDelay` | `number` | `1000` | Base delay (ms) between retries |
+| `redaction` | `object` | — | Paths and mask for sensitive data redaction |
+| `debug` | `boolean` | `false` | Enable verbose SDK debug logging |
+| `onError` | `function` | — | Called when log delivery fails |
+| `onSuccess` | `function` | — | Called when logs are delivered successfully |
+| `autoStart` | `boolean` | `true` (Node/Browser), `false` (edge) | Auto-start the flush timer |
+| `runtime` | `RuntimeType` | auto-detected | Force a specific runtime |
 
 ### Runtime Detection Functions
 

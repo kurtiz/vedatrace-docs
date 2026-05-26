@@ -64,16 +64,22 @@ The VedaTrace SDK provides integrations for popular frameworks to make it even e
     ```
   </Tab>
   <Tab value="Cloudflare Workers">
-    When using VedaTrace in a Cloudflare Worker, it's important to use `ctx.waitUntil` to ensure that logs are sent before the worker is terminated.
+    Cloudflare Workers terminate shortly after returning a `Response`. To ensure logs are sent reliably, use one of these approaches:
+
+    ### Recommended: Pass `waitUntil` in config
+
+    Import `waitUntil` from `cloudflare:workers` and pass it in the config. Flushing happens automatically — no manual calls needed.
 
     ```typescript
     import { vedatrace } from 'vedatrace'
+    import { waitUntil } from 'cloudflare:workers'
 
     export default {
       async fetch(req, env, ctx) {
         const logger = vedatrace({ 
           apiKey: env.VEDATRACE_API_KEY,
-          service: 'worker'
+          service: 'worker',
+          waitUntil,  // Keeps worker alive during log delivery
         })
         
         logger.info('Request received', { 
@@ -81,12 +87,37 @@ The VedaTrace SDK provides integrations for popular frameworks to make it even e
           url: req.url 
         })
         
-        // Ensure logs are sent before the response
-        ctx.waitUntil(logger.flush())
-        
         return new Response('OK')
       }
     }
+    ```
+
+    ### Alternative: Use `.withContext(ctx)`
+
+    If you prefer not to import `waitUntil`, attach the execution context to the logger:
+
+    ```typescript
+    import { vedatrace } from 'vedatrace'
+
+    const logger = vedatrace({ 
+      apiKey: env.VEDATRACE_API_KEY,
+      service: 'worker',
+    })
+
+    export default {
+      async fetch(req, env, ctx) {
+        logger.withContext(ctx)
+        logger.info('Request received')
+        return new Response('OK')
+      }
+    }
+    ```
+
+    ### Legacy: Manual `ctx.waitUntil(logger.flush())`
+
+    ```typescript
+    logger.info('Request received')
+    ctx.waitUntil(logger.flush())
     ```
   </Tab>
 </Tabs>

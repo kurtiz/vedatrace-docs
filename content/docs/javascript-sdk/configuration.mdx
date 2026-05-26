@@ -22,6 +22,10 @@ const logger = vedatrace({
   batchSize: 100,                   // Flush after N logs
   flushInterval: 5000,             // Flush after N ms
   
+  // Flush behavior
+  immediateFlush: true,             // Flush immediately on each log
+  waitUntil: waitUntil,             // Cloudflare Workers waitUntil function
+  
   // Retry
   maxRetries: 3,
   retryDelay: 1000,
@@ -31,6 +35,9 @@ const logger = vedatrace({
     paths: ['password', 'token'],
     mask: '[REDACTED]'
   },
+  
+  // Debug
+  debug: true,                      // Enable verbose logging
   
   // Callbacks
   onError: (err) => console.error('VedaTrace error:', err),
@@ -44,11 +51,14 @@ const logger = vedatrace({
 - `service` (string): A default name for your service or application.
 - `endpoint` (string): The VedaTrace ingestion endpoint. Defaults to `https://ingest.vedatrace.dev/v1/logs`.
 - `environment` (string): The environment your application is running in, e.g., `production`, `development`, `staging`.
-- `batchSize` (number): The number of logs to batch before sending. Defaults to `100`.
-- `flushInterval` (number): The maximum time in milliseconds to wait before sending a batch. Defaults to `5000`.
+- `batchSize` (number): The number of logs to batch before flushing. Defaults to `100`.
+- `flushInterval` (number): The maximum time in milliseconds to wait before flushing a batch. Defaults to `5000` (Node.js / Browser) or `1000` (edge runtimes).
+- `immediateFlush` (boolean): When `true`, flushes logs to the transport immediately when a log is added, bypassing batching. Useful for serverless environments where timers aren't reliable.
+- `waitUntil` (function): The `waitUntil` function from `cloudflare:workers`. When provided, VedaTrace uses it to keep the worker alive during log flushing. This is the recommended approach for Cloudflare Workers.
 - `maxRetries` (number): The maximum number of times to retry sending a batch. Defaults to `3`.
 - `retryDelay` (number): The delay in milliseconds between retries. Defaults to `1000`.
 - `redaction` (object): An object with `paths` (an array of strings to redact) and `mask` (the string to replace them with).
+- `debug` (boolean): When `true`, enables verbose logging of SDK internals (flush timing, transport errors, batch operations) to the console.
 - `onError` (function): A callback function that is called when an error occurs while sending logs.
 - `onSuccess` (function): A callback function that is called when logs are sent successfully.
 - `autoStart` (boolean): Automatically start the flush timer when the logger is created. Defaults to `false` for edge runtimes (Cloudflare Workers, Deno, Bun) and `true` for Node.js and browser.

@@ -34,6 +34,42 @@ app.post('/webhook', async (req, res) => {
 })
 ```
 
+### Serverless Flush (Cloudflare Workers)
+
+In serverless environments like Cloudflare Workers, the runtime terminates the worker shortly after returning a `Response`. Any in-flight HTTP requests — including log delivery — are cancelled.
+
+VedaTrace provides three ways to ensure logs are delivered before termination:
+
+**Option 1: `waitUntil` config (recommended)**
+
+Pass the `waitUntil` function from `cloudflare:workers` in your config:
+
+```typescript
+import { waitUntil } from 'cloudflare:workers'
+
+const logger = vedatrace({
+  apiKey: '...',
+  service: 'my-worker',
+  waitUntil,  // Extends worker lifetime during log flushing
+})
+```
+
+Logs flush automatically after each `logger.info()`, `logger.error()`, etc. — no manual `flush()` call needed.
+
+**Option 2: Execution context via `.withContext(ctx)`**
+
+```typescript
+logger.withContext(ctx)
+```
+
+VedaTrace stores the `ctx` object and calls `ctx.waitUntil(flushPromise)` internally.
+
+**Option 3: Manual `ctx.waitUntil(logger.flush())`**
+
+```typescript
+ctx.waitUntil(logger.flush())
+```
+
 ### Graceful Shutdown
 
 The SDK uses a background timer to flush logs. For short-lived scripts or when you need to explicitly clean up, you can stop the timer.

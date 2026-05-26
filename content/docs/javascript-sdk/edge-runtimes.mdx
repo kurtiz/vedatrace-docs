@@ -27,60 +27,120 @@ const isEdge = isEdgeRuntime()
 // Returns: true for cloudflare, deno, bun, edge
 ```
 
-## Timer Behavior
+## Environment Comparison
 
-Edge runtimes have restrictions on global timers that can prevent the process from exiting properly. VedaTrace handles this automatically:
+Each runtime has different constraints for background work. VedaTrace adapts to each:
 
-| Runtime | Timer Behavior |
-|---------|----------------|
-| Node.js | Timer starts automatically |
-| Browser | Timer starts automatically |
-| Cloudflare Workers | Timer disabled (autoStart=false) |
-| Deno | Timer disabled (autoStart=false) |
-| Bun | Timer disabled (autoStart=false) |
+| Environment | Strategy | Flush Trigger | Automatic Delivery |
+|-------------|----------|---------------|-------------------|
+| Node.js (backend) | Batch timer | Every 3s + `beforeExit`/`SIGTERM`/`SIGINT` | Yes — process stays alive |
+| Browser (frontend) | Batch + lifecycle | Every 3s + `pagehide`/`visibilitychange` | Yes — browser keeps page alive |
+| Bun / Deno | Batch timer (unref'd) | Every 3s | Yes — runtime stays alive |
+| Cloudflare Workers | waitUntil-based flush | `queueMicrotask` after each log call | Requires `waitUntil` config or execution context |
 
 ## Cloudflare Workers
 
-VedaTrace works out of the box with Cloudflare Workers. The auto-detection automatically disables the flush timer to comply with edge runtime restrictions.
+Cloudflare Workers terminate execution shortly after returning a `Response`. Any pending asynchronous operations — including in-flight HTTP requests to send logs — are cancelled immediately.
 
-```typescript
-// Just use normally - auto-detects edge runtime
-import { vedatrace } from 'vedatrace'
+To reliably send logs, VedaTrace needs to register the flush operation with the Workers runtime so it keeps the worker alive until the HTTP request completes.
 
-const logger = vedatrace({
-  apiKey: process.env.VEDATRACE_API_KEY,
-  service: 'my-worker'
-})
+### Approach 1: waitUntil config (recommended)
 
-export default {
-  async fetch(request) {
-    logger.info('Request received', { url: request.url })
-    return new Response('Hello')
-  }
-}
-```
-
-### Manual Timer Control
-
-If you need more control, you can manually start the flush timer inside your handler:
+Pass the `waitUntil` function from `cloudflare:workers` in your config. VedaTrace automatically calls it to extend the worker's lifetime during log flushing.
 
 ```typescript
 import { vedatrace } from 'vedatrace'
+import { waitUntil } from 'cloudflare:workers'
 
 const logger = vedatrace({
-  apiKey: process.env.VEDATRACE_API_KEY,
+  apiKey: env.VEDATRACE_API_KEY,
   service: 'my-worker',
-  autoStart: false  // Disable auto-start
+  waitUntil,  // Keeps worker alive during log delivery
 })
 
 export default {
   async fetch(request) {
-    logger.start()  // Start timer inside handler
     logger.info('Request received', { url: request.url })
     return new Response('Hello')
   }
 }
 ```
+
+Logs flush automatically — no need to manually call `logger.flush()`.
+
+### Approach 2: Execution context with `.withContext(ctx)`
+
+If you have access to the `ctx` parameter from `fetch(request, env, ctx)` or `export default { fetch(request, env, ctx) }`:
+
+```typescript
+import { vedatrace } from 'vedatrace'
+
+const logger = vedatrace({
+  apiKey: env.VEDATRACE_API_KEY,
+  service: 'my-worker',
+})
+
+export default {
+  async fetch(request, env, ctx) {
+    // Attach the Cloudflare execution context
+    logger.withContext(ctx)
+
+    logger.info('Request received', { url: request.url })
+    return new Response('Hello')
+  }
+}
+```
+
+`.withContext(ctx)` stores the `ctx` object, and VedaTrace uses `ctx.waitUntil()` to keep the worker alive during log flushing.
+
+### Approach 3: Manual ctx.waitUntil (legacy)
+
+If you prefer to control flushing explicitly:
+
+```typescript
+import { vedatrace } from 'vedatrace'
+
+const logger = vedatrace({
+  apiKey: env.VEDATRACE_API_KEY,
+  service: 'my-worker',
+})
+
+export default {
+  async fetch(request, env, ctx) {
+    logger.info('Request received', { url: request.url })
+
+    // Ensure logs are sent before response
+    ctx.waitUntil(logger.flush())
+
+    return new Response('Hello')
+  }
+}
+```
+
+### Passing waitUntil in TanStack Start
+
+TanStack Start on Cloudflare Workers uses route handlers that receive a generic `context` object — not the Cloudflare `ExecutionContext`. Import `waitUntil` from `cloudflare:workers` directly:
+
+```typescript
+import { createAPIFileRoute } from '@tanstack/react-start/api'
+import { vedatrace } from 'vedatrace'
+import { waitUntil } from 'cloudflare:workers'
+
+const logger = vedatrace({
+  apiKey: import.meta.env.VITE_VEDATRACE_API_KEY,
+  service: 'pos-plus-backend',
+  waitUntil,
+})
+
+export const APIRoute = createAPIFileRoute('/api/test')({
+  GET: async ({ request, context }) => {
+    logger.info('Test endpoint hit')
+    return Response.json({ ok: true })
+  }
+})
+```
+
+No manual `.flush()` needed — VedaTrace handles it automatically.
 
 ## Deno
 
@@ -96,6 +156,8 @@ const logger = vedatrace({
 
 logger.info('Deno app started')
 ```
+
+Deno keeps the process alive for pending async operations, so the standard batch timer works reliably.
 
 ## Bun
 
